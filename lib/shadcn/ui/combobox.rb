@@ -120,6 +120,7 @@ module Shadcn
         @attrs.merge(
           data_slot: "combobox-content",
           data_shadcn__combobox_target: "content",
+          role: "listbox",
           hidden: true,
           class: classes
         )
@@ -208,6 +209,7 @@ module Shadcn
           "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm",
           "outline-hidden select-none",
           "data-[state=checked]:font-medium",
+          "focus:bg-accent focus:text-accent-foreground",
           "hover:bg-accent hover:text-accent-foreground",
           "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @attrs.delete(:class)
@@ -217,6 +219,7 @@ module Shadcn
           data_shadcn__combobox_target: "item",
           data_action: "click->shadcn--combobox#selectItem",
           data_value: @value,
+          role: "option",
           tabindex: "-1",
           class: classes
         )
