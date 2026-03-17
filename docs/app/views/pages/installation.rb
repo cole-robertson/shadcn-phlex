@@ -16,23 +16,25 @@ module Pages
         rails g shadcn_phlex:install --base-color=neutral --accent-color=blue
       BASH
 
-      step("3. Register Stimulus controllers", <<~JS)
-        // app/javascript/controllers/index.js
-        import { registerShadcnControllers } from "shadcn/controllers"
-        registerShadcnControllers(application)
-      JS
-
-      step("4. Include Kit in your base view", <<~RUBY)
-        # app/views/application_view.rb
-        class ApplicationView < Phlex::HTML
-          include Shadcn::Kit
+      div(class: "mb-8") do
+        p(class: "text-muted-foreground") do
+          plain "The generator sets up everything automatically:"
         end
-      RUBY
+        ul(class: "mt-2 ml-6 list-disc text-sm text-muted-foreground [&>li]:mt-1") do
+          li { "app/views/application_view.rb with Shadcn::Kit included" }
+          li { "app/assets/stylesheets/shadcn.css (Tailwind + theme)" }
+          li { "app/javascript/controllers/shadcn/ (25 Stimulus controllers)" }
+          li { "config/application.rb (autoload app/views for Phlex)" }
+        end
+      end
 
-      step("5. Start building", <<~RUBY)
+      step("3. Start building", <<~RUBY)
         class MyView < ApplicationView
           def view_template
-            ui_button { "Hello World" }
+            ui_card do
+              ui_card_header { ui_card_title { "Hello" } }
+              ui_card_content { ui_button { "World" } }
+            end
           end
         end
       RUBY
@@ -42,7 +44,7 @@ module Pages
         p(class: "text-muted-foreground mb-4") do
           plain "Install the agent skill so your AI assistant knows every component:"
         end
-        render Components::CodeBlock.new(code: "npx skills add shadcn-phlex/shadcn-phlex", language: "bash")
+        render ::Components::CodeBlock.new(code: "npx skills add shadcn-phlex/shadcn-phlex", language: "bash")
       end
     end
 
@@ -51,7 +53,7 @@ module Pages
     def step(title, code)
       div(class: "mb-8") do
         h3(class: "text-lg font-semibold mb-2") { title }
-        render Components::CodeBlock.new(code: code.strip)
+        render ::Components::CodeBlock.new(code: code.strip)
       end
     end
   end

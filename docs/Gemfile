@@ -56,5 +56,5 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 end
-gem "shadcn-phlex", path: "..", require: "shadcn"
+gem "shadcn-phlex", path: ".."
 gem "phlex-rails", "~> 2.1"

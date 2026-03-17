@@ -16,14 +16,47 @@ module ShadcnPhlex
 
     def add_gems
       gem "phlex-rails", "~> 2.1" unless gem_installed?("phlex-rails")
-      gem "class_variants", "~> 1.0" unless gem_installed?("class_variants")
-      gem "tailwind_merge", "~> 1.0" unless gem_installed?("tailwind_merge")
     end
 
     def add_npm_packages
-      say_status :run, "Adding tw-animate-css and @hotwired/stimulus", :green
-      run "npm install tw-animate-css @hotwired/stimulus" if File.exist?("package.json")
-      run "yarn add tw-animate-css @hotwired/stimulus" if File.exist?("yarn.lock")
+      say_status :run, "Adding tw-animate-css", :green
+      if File.exist?("package.json")
+        run "npm install tw-animate-css"
+      elsif File.exist?("yarn.lock")
+        run "yarn add tw-animate-css"
+      end
+    end
+
+    def configure_autoload
+      # Phlex views in app/views/ need to be autoloaded
+      application_rb = "config/application.rb"
+      return unless File.exist?(application_rb)
+
+      content = File.read(application_rb)
+      return if content.include?("app/views")
+
+      inject_into_file application_rb,
+        after: /config\.autoload_lib.*\n/ do
+        <<-RUBY
+    # Autoload Phlex views
+    config.autoload_paths << Rails.root.join("app/views")
+
+        RUBY
+      end
+      say_status :inject, "config.autoload_paths << app/views", :green
+    end
+
+    def create_application_view
+      path = "app/views/application_view.rb"
+      return if File.exist?(path)
+
+      create_file path, <<~RUBY
+        # frozen_string_literal: true
+
+        class ApplicationView < Phlex::HTML
+          include Shadcn::Kit
+        end
+      RUBY
     end
 
     def copy_tailwind_config
@@ -53,7 +86,7 @@ module ShadcnPhlex
       CSS
     end
 
-    def create_entrypoint
+    def create_css_entrypoint
       gem_path = Gem.loaded_specs["shadcn-phlex"]&.full_gem_path
 
       create_file "app/assets/stylesheets/shadcn.css", <<~CSS
@@ -69,26 +102,60 @@ module ShadcnPhlex
       CSS
     end
 
-    def setup_stimulus
-      say_status :info, "Register shadcn Stimulus controllers in your application.js:", :blue
-      say <<~MSG
+    def copy_stimulus_controllers
+      # Copy JS controllers into the app so bundlers can find them
+      gem_js = File.expand_path("../../../../js/controllers", __dir__)
+      target = "app/javascript/controllers/shadcn"
 
-        import { registerShadcnControllers } from "shadcn/controllers"
+      if File.directory?(gem_js) && !File.directory?(target)
+        FileUtils.mkdir_p(target)
+        Dir[File.join(gem_js, "*.js")].each do |file|
+          copy_file file, File.join(target, File.basename(file))
+        end
+        say_status :create, "#{target}/ (#{Dir[File.join(gem_js, '*.js')].count} controllers)", :green
+      end
+    end
+
+    def create_stimulus_registration
+      index_path = "app/javascript/controllers/index.js"
+      return unless File.exist?(index_path)
+
+      content = File.read(index_path)
+      return if content.include?("shadcn")
+
+      # Add import and registration
+      append_to_file index_path, <<~JS
+
+        // shadcn-phlex Stimulus controllers
+        import { registerShadcnControllers } from "./shadcn/index"
         registerShadcnControllers(application)
-
-      MSG
+      JS
+      say_status :inject, "shadcn controllers into #{index_path}", :green
     end
 
     def print_setup_complete
       say_status :info, "Setup complete!", :green
       say <<~MSG
 
+        shadcn-phlex is ready. Here's what was set up:
+          - app/views/application_view.rb (base view with Shadcn::Kit)
+          - app/assets/stylesheets/shadcn.css (Tailwind + theme)
+          - app/javascript/controllers/shadcn/ (Stimulus controllers)
+          - config/application.rb (autoload app/views)
+
+        Start using components in any Phlex view:
+          class MyView < ApplicationView
+            def view_template
+              ui_button { "Hello" }
+            end
+          end
+
         To change your theme:
           1. Go to ui.shadcn.com/themes
-          2. Pick a theme and copy the CSS
+          2. Copy the CSS
           3. Paste into app/assets/stylesheets/shadcn-theme.css
 
-        For AI/LLM support, install the agent skill:
+        For AI/LLM support:
           npx skills add shadcn-phlex/shadcn-phlex
 
       MSG
