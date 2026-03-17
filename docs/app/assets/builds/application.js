@@ -10569,9 +10569,10 @@
         el.setAttribute("aria-expanded", String(open));
       });
       this.contentTargets.forEach((el) => {
-        el.dataset.state = state;
         if (open) {
+          el.getAnimations().forEach((a) => a.cancel());
           el.hidden = false;
+          el.dataset.state = "open";
           this._position(el);
           requestAnimationFrame(() => {
             const selected = el.querySelector(`[data-value="${this.valueValue}"]`);
@@ -10579,9 +10580,16 @@
             target?.focus();
           });
         } else {
-          this._hideTimeouts.push(setTimeout(() => {
+          el.dataset.state = "closed";
+          const animations = el.getAnimations();
+          if (animations.length > 0) {
+            Promise.all(animations.map((a) => a.finished)).then(() => {
+              if (el.dataset.state === "closed") el.hidden = true;
+            }).catch(() => {
+            });
+          } else {
             el.hidden = true;
-          }, 150));
+          }
         }
       });
     }

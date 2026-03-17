@@ -93,9 +93,11 @@ export default class extends Controller {
     })
 
     this.contentTargets.forEach((el) => {
-      el.dataset.state = state
       if (open) {
+        // Cancel any in-progress close animation
+        el.getAnimations().forEach(a => a.cancel())
         el.hidden = false
+        el.dataset.state = "open"
         this._position(el)
         requestAnimationFrame(() => {
           const selected = el.querySelector(`[data-value="${this.valueValue}"]`)
@@ -103,7 +105,18 @@ export default class extends Controller {
           target?.focus()
         })
       } else {
-        this._hideTimeouts.push(setTimeout(() => { el.hidden = true }, 150))
+        el.dataset.state = "closed"
+        // Wait for the CSS close animation to finish, then hide
+        const animations = el.getAnimations()
+        if (animations.length > 0) {
+          Promise.all(animations.map(a => a.finished)).then(() => {
+            if (el.dataset.state === "closed") el.hidden = true
+          }).catch(() => {
+            // Animation was cancelled (reopened before finishing)
+          })
+        } else {
+          el.hidden = true
+        }
       }
     })
   }

@@ -3712,6 +3712,11 @@
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
+  .\[\&\>div\]\:\!block {
+    &>div {
+      display: block !important;
+    }
+  }
   .\[\&\>input\]\:border-0 {
     &>input {
       border-style: var(--tw-border-style);
