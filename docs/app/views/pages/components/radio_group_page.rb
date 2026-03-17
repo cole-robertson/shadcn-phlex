@@ -9,7 +9,7 @@ module Pages
 
       def view_template
         preview("Default") do
-          ui_radio_group(name: "plan") do
+          ui_radio_group(name: "plan", value: "free") do
             div(class: "flex items-center gap-2") do
               ui_radio_group_item(value: "free", checked: true)
               ui_label { "Free" }
@@ -26,7 +26,7 @@ module Pages
         end
 
         preview("Horizontal") do
-          ui_radio_group(name: "size", class: "flex flex-row gap-4") do
+          ui_radio_group(name: "size", value: "md", class: "flex flex-row gap-4") do
             div(class: "flex items-center gap-2") do
               ui_radio_group_item(value: "sm")
               ui_label { "Small" }

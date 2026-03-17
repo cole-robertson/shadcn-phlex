@@ -4,15 +4,16 @@ module Shadcn
   module UI
     # Port of shadcn/ui RadioGroup
     class RadioGroup < Base
-      def initialize(name: nil, **attrs)
+      def initialize(name: nil, value: nil, **attrs)
         @name = name
+        @value = value
         @attrs = attrs
       end
 
       def view_template(&block)
         div(**build_attrs) do
           if @name
-            input(type: "hidden", name: @name, value: "", data_shadcn__radio_group_target: "input")
+            input(type: "hidden", name: @name, value: @value.to_s, data_shadcn__radio_group_target: "input")
           end
           yield if block_given?
         end
@@ -22,12 +23,14 @@ module Shadcn
 
       def build_attrs
         classes = cn("grid gap-3", @attrs.delete(:class))
-        @attrs.merge(
+        attrs = @attrs.merge(
           data_slot: "radio-group",
           data_controller: "shadcn--radio-group",
           role: "radiogroup",
           class: classes
         )
+        attrs[:data_shadcn__radio_group_value_value] = @value.to_s if @value
+        attrs
       end
     end
 
@@ -40,17 +43,20 @@ module Shadcn
 
       def view_template
         button(**build_attrs) do
-          if @checked
-            span(class: "relative flex items-center justify-center") do
-              svg(
-                xmlns: "http://www.w3.org/2000/svg",
-                width: "8", height: "8",
-                viewbox: "0 0 24 24",
-                fill: "currentColor",
-                class: "size-2.5 fill-primary"
-              ) do |s|
-                s.circle(cx: "12", cy: "12", r: "10")
-              end
+          span(
+            data_shadcn__radio_group_target: "indicator",
+            data_value: @value,
+            hidden: !@checked,
+            class: "relative flex items-center justify-center"
+          ) do
+            svg(
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "8", height: "8",
+              viewbox: "0 0 24 24",
+              fill: "currentColor",
+              class: "size-2.5 fill-primary"
+            ) do |s|
+              s.circle(cx: "12", cy: "12", r: "10")
             end
           end
         end

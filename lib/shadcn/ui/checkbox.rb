@@ -11,7 +11,7 @@ module Shadcn
       end
 
       def view_template
-        span(data_controller: "shadcn--checkbox") do
+        span(data_controller: "shadcn--checkbox", data_shadcn__checkbox_checked_value: @checked.to_s) do
         if @name
           input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__checkbox_target: "input")
         end
