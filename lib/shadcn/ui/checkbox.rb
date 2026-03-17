@@ -10,33 +10,36 @@ module Shadcn
         @attrs = attrs
       end
 
-      def view_template
-        span(data_controller: "shadcn--checkbox", data_shadcn__checkbox_checked_value: @checked.to_s) do
-        if @name
-          input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__checkbox_target: "input")
-        end
-        button(**build_attrs) do
-          span(
-            data_slot: "checkbox-indicator",
-            data_shadcn__checkbox_target: "indicator",
-            hidden: !@checked,
-            class: "grid place-content-center text-current transition-none"
-          ) do
-            svg(
-              xmlns: "http://www.w3.org/2000/svg",
-              width: "14", height: "14",
-              viewbox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              stroke_width: "2",
-              stroke_linecap: "round",
-              stroke_linejoin: "round",
-              class: "size-3.5"
-            ) do |s|
-              s.path(d: "M20 6 9 17l-5-5")
+      def view_template(&block)
+        label(data_controller: "shadcn--checkbox", data_shadcn__checkbox_checked_value: @checked.to_s, class: "inline-flex items-center gap-2 cursor-pointer") do
+          if @name
+            input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__checkbox_target: "input")
+          end
+          button(**build_attrs) do
+            span(
+              data_slot: "checkbox-indicator",
+              data_shadcn__checkbox_target: "indicator",
+              hidden: !@checked,
+              class: "grid place-content-center text-current transition-none"
+            ) do
+              svg(
+                xmlns: "http://www.w3.org/2000/svg",
+                width: "14", height: "14",
+                viewbox: "0 0 24 24",
+                fill: "none",
+                stroke: "currentColor",
+                stroke_width: "2",
+                stroke_linecap: "round",
+                stroke_linejoin: "round",
+                class: "size-3.5"
+              ) do |s|
+                s.path(d: "M20 6 9 17l-5-5")
+              end
             end
           end
-        end
+          if block
+            span(data_slot: "checkbox-label", class: "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", &block)
+          end
         end
       end
 

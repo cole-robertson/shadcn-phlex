@@ -16,31 +16,23 @@ module Pages
           ui_checkbox(checked: true)
         end
 
-        preview("With label") do
-          div(class: "flex items-center gap-2") do
-            ui_checkbox(checked: false)
-            ui_label { "Accept terms and conditions" }
-          end
+        preview("With label", description: "Click the label to toggle.") do
+          ui_checkbox { "Accept terms and conditions" }
         end
 
         preview("Checked with label") do
-          div(class: "flex items-center gap-2") do
-            ui_checkbox(checked: true)
-            ui_label { "I agree to the privacy policy" }
-          end
+          ui_checkbox(checked: true) { "I agree to the privacy policy" }
         end
 
         preview("With form name") do
-          div(class: "flex items-center gap-2") do
-            ui_checkbox(name: "newsletter", checked: true)
-            ui_label { "Subscribe to newsletter" }
-          end
+          ui_checkbox(name: "newsletter", checked: true) { "Subscribe to newsletter" }
         end
 
         code <<~RUBY
           ui_checkbox
           ui_checkbox(checked: true)
-          ui_checkbox(name: "terms", checked: false)
+          ui_checkbox(name: "terms") { "Accept terms and conditions" }
+          ui_checkbox(name: "newsletter", checked: true) { "Subscribe" }
         RUBY
       end
     end
