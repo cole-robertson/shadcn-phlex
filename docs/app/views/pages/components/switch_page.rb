@@ -16,37 +16,25 @@ module Pages
           ui_switch(checked: true)
         end
 
-        preview("With label") do
-          div(class: "flex items-center gap-2") do
-            ui_switch(checked: true)
-            ui_label { "Airplane Mode" }
-          end
+        preview("With label", description: "Click the label to toggle.") do
+          ui_switch(checked: true) { "Airplane Mode" }
         end
 
         preview("Small size") do
-          div(class: "flex items-center gap-3") do
-            div(class: "flex items-center gap-2") do
-              ui_switch(size: :default)
-              ui_label { "Default" }
-            end
-            div(class: "flex items-center gap-2") do
-              ui_switch(size: :sm)
-              ui_label { "Small" }
-            end
+          div(class: "flex items-center gap-4") do
+            ui_switch { "Default" }
+            ui_switch(size: :sm) { "Small" }
           end
         end
 
         preview("With form name") do
-          div(class: "flex items-center gap-2") do
-            ui_switch(name: "notifications", checked: true)
-            ui_label { "Enable notifications" }
-          end
+          ui_switch(name: "notifications", checked: true) { "Enable notifications" }
         end
 
         code <<~RUBY
           ui_switch
-          ui_switch(checked: true, size: :sm)
-          ui_switch(name: "dark_mode", checked: false)
+          ui_switch(checked: true) { "Airplane Mode" }
+          ui_switch(name: "notifications", checked: true) { "Enable" }
         RUBY
       end
     end

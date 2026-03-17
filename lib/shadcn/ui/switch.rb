@@ -12,13 +12,20 @@ module Shadcn
         @attrs = attrs
       end
 
-      def view_template
-        span(data_controller: "shadcn--switch") do
+      def view_template(&block)
+        label(
+          data_controller: "shadcn--switch",
+          data_shadcn__switch_checked_value: @checked.to_s,
+          class: "inline-flex items-center gap-2 cursor-pointer"
+        ) do
           if @name
             input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__switch_target: "input")
           end
           button(**build_attrs) do
             span(**thumb_attrs)
+          end
+          if block
+            span(class: "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", &block)
           end
         end
       end
