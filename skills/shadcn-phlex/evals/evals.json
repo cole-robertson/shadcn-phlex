@@ -1,0 +1,90 @@
+[
+  {
+    "prompt": "Create a settings page with a name field, email field, and save button using shadcn-phlex",
+    "expected_behaviors": [
+      "Uses ui_card or ui_card_content for layout",
+      "Uses ui_text_field for form fields (not raw ui_field + ui_label + ui_input)",
+      "Includes name: parameter on form controls",
+      "Uses ui_button for the save button",
+      "Does not hardcode colors (uses semantic tokens)"
+    ]
+  },
+  {
+    "prompt": "Add a confirmation dialog that asks 'Are you sure?' before deleting an item",
+    "expected_behaviors": [
+      "Uses ui_alert_dialog (not ui_dialog) since overlay click should not close",
+      "Includes ui_alert_dialog_trigger with a destructive button",
+      "Uses ui_alert_dialog_header with title and description",
+      "Uses ui_alert_dialog_footer with cancel and action buttons",
+      "Cancel uses ui_alert_dialog_cancel, action uses ui_alert_dialog_action"
+    ]
+  },
+  {
+    "prompt": "Create a tabs component with Account and Password tabs",
+    "expected_behaviors": [
+      "Uses ui_tabs with an initial value",
+      "Each ui_tabs_trigger has a value: parameter",
+      "Each ui_tabs_content has a matching value: parameter",
+      "Trigger values match content values exactly"
+    ]
+  },
+  {
+    "prompt": "Build a form with checkboxes for Terms and Marketing opt-in",
+    "expected_behaviors": [
+      "Uses ui_checkbox with name: parameter for form submission",
+      "Associates each checkbox with a label",
+      "Does not manually add data-controller or data-action attributes"
+    ]
+  },
+  {
+    "prompt": "Create a dropdown menu with Edit, Duplicate, and Delete options",
+    "expected_behaviors": [
+      "Uses ui_dropdown_menu with trigger and content",
+      "Delete item uses variant: :destructive",
+      "Uses ui_dropdown_menu_separator between groups",
+      "Does not manually wire Stimulus controllers"
+    ]
+  },
+  {
+    "prompt": "Add a select dropdown for choosing a country in a form",
+    "expected_behaviors": [
+      "Uses ui_select with name: parameter",
+      "Includes ui_select_trigger wrapping ui_select_value with placeholder",
+      "Uses ui_select_content wrapping ui_select_item components",
+      "Each ui_select_item has a value: parameter"
+    ]
+  },
+  {
+    "prompt": "Create an accordion FAQ section",
+    "expected_behaviors": [
+      "Uses ui_accordion with type and collapsible options",
+      "Each item has ui_accordion_item wrapping trigger + content",
+      "Uses ui_accordion_trigger for the question",
+      "Uses ui_accordion_content for the answer"
+    ]
+  },
+  {
+    "prompt": "Show a loading skeleton for a card",
+    "expected_behaviors": [
+      "Uses ui_card for the container",
+      "Uses ui_skeleton for placeholder elements",
+      "Applies appropriate width/height classes to skeletons"
+    ]
+  },
+  {
+    "prompt": "Add a dark mode toggle to the navbar",
+    "expected_behaviors": [
+      "Uses ui_theme_toggle component",
+      "Does not manually implement dark mode logic"
+    ]
+  },
+  {
+    "prompt": "Create a data table showing users with name, email, and role columns",
+    "expected_behaviors": [
+      "Uses ui_table with header and body",
+      "Uses ui_table_header, ui_table_body, ui_table_row",
+      "Uses ui_table_head for header cells, ui_table_cell for body cells",
+      "Iterates over data collection for rows"
+    ]
+  }
+]
