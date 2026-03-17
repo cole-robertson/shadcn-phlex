@@ -23,17 +23,20 @@ export default class extends Controller {
   }
 
   connect() {
-    // Read stored preference, or fall back to current value
-    const stored = localStorage.getItem("theme")
-    if (stored && ["light", "dark", "system"].includes(stored)) {
-      this.modeValue = stored
-    }
+    this._connected = false
 
     // Listen for OS preference changes
     this._mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
     this._onMediaChange = this._handleMediaChange.bind(this)
     this._mediaQuery.addEventListener("change", this._onMediaChange)
 
+    // Read stored preference — set AFTER listeners are ready
+    const stored = localStorage.getItem("theme")
+    if (stored && ["light", "dark", "system"].includes(stored)) {
+      this.modeValue = stored
+    }
+
+    this._connected = true
     this._apply()
   }
 
@@ -44,7 +47,11 @@ export default class extends Controller {
   }
 
   modeValueChanged() {
-    this._apply()
+    // Only apply after connect has finished to avoid overwriting localStorage
+    // from the default value race
+    if (this._connected) {
+      this._apply()
+    }
   }
 
   // ── Actions ──────────────────────────────────────────────

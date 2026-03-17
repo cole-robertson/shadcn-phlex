@@ -8727,13 +8727,15 @@
       mode: { type: String, default: "system" }
     };
     connect() {
+      this._connected = false;
+      this._mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      this._onMediaChange = this._handleMediaChange.bind(this);
+      this._mediaQuery.addEventListener("change", this._onMediaChange);
       const stored = localStorage.getItem("theme");
       if (stored && ["light", "dark", "system"].includes(stored)) {
         this.modeValue = stored;
       }
-      this._mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      this._onMediaChange = this._handleMediaChange.bind(this);
-      this._mediaQuery.addEventListener("change", this._onMediaChange);
+      this._connected = true;
       this._apply();
     }
     disconnect() {
@@ -8742,7 +8744,9 @@
       }
     }
     modeValueChanged() {
-      this._apply();
+      if (this._connected) {
+        this._apply();
+      }
     }
     // ── Actions ──────────────────────────────────────────────
     toggle() {

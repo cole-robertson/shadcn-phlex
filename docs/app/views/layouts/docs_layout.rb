@@ -29,6 +29,11 @@ module Layouts
           meta(name: "viewport", content: "width=device-width,initial-scale=1")
           title { [@title, "shadcn-phlex"].compact.join(" — ") }
           stylesheet_tag("application")
+          # Blocking script to apply dark mode before first paint — prevents FOUC
+          comment { "Blocking dark mode script to prevent FOUC" }
+          script do
+            raw(Phlex::HTML::SafeValue.new('(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme:dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();'))
+          end
           script_tag("application")
         end
         body(class: "min-h-screen bg-background text-foreground antialiased", data_controller: "shadcn--dark-mode") do

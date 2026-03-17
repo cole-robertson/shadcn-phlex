@@ -15,6 +15,9 @@ module Pages
           meta(name: "viewport", content: "width=device-width,initial-scale=1")
           title { "shadcn-phlex — shadcn/ui for Rails" }
           stylesheet_tag("application")
+          script do
+            raw(Phlex::HTML::SafeValue.new('(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme:dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();'))
+          end
           script_tag("application")
         end
         body(class: "min-h-screen bg-background text-foreground antialiased", data_controller: "shadcn--dark-mode") do
