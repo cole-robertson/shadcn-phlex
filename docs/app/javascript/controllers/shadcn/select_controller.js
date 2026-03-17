@@ -33,6 +33,7 @@ export default class extends Controller {
   hide() { this.openValue = false }
 
   selectItem(event) {
+    event.stopPropagation()
     const item = event.currentTarget
     if (item.dataset.disabled) return
 
@@ -76,24 +77,30 @@ export default class extends Controller {
       if (this.openValue) {
         el.hidden = false
         this._position(el)
-        // Focus selected or first item
         requestAnimationFrame(() => {
           const selected = el.querySelector(`[data-value="${this.valueValue}"]`)
           const target = selected || el.querySelector('[data-slot="select-item"]:not([data-disabled])')
           target?.focus()
         })
       } else {
+        // Clear any pending hide timeouts first to prevent flicker
+        this._hideTimeouts.forEach(id => clearTimeout(id))
+        this._hideTimeouts = []
         this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
       }
     })
 
+    // Always remove old listeners first
+    this._removeListeners()
+
     if (this.openValue) {
-      requestAnimationFrame(() => {
-        document.addEventListener("click", this._onClickOutside, true)
-      })
+      // Delay adding click-outside so the current click event finishes bubbling
+      setTimeout(() => {
+        if (this.openValue) {
+          document.addEventListener("click", this._onClickOutside, true)
+        }
+      }, 0)
       document.addEventListener("keydown", this._onKeydown)
-    } else {
-      this._removeListeners()
     }
   }
 

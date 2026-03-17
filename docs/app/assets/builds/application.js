@@ -10522,6 +10522,7 @@
       this.openValue = false;
     }
     selectItem(event) {
+      event.stopPropagation();
       const item = event.currentTarget;
       if (item.dataset.disabled) return;
       const value = item.dataset.value;
@@ -10563,18 +10564,21 @@
             target?.focus();
           });
         } else {
+          this._hideTimeouts.forEach((id) => clearTimeout(id));
+          this._hideTimeouts = [];
           this._hideTimeouts.push(setTimeout(() => {
             if (el.dataset.state === "closed") el.hidden = true;
           }, 200));
         }
       });
+      this._removeListeners();
       if (this.openValue) {
-        requestAnimationFrame(() => {
-          document.addEventListener("click", this._onClickOutside, true);
-        });
+        setTimeout(() => {
+          if (this.openValue) {
+            document.addEventListener("click", this._onClickOutside, true);
+          }
+        }, 0);
         document.addEventListener("keydown", this._onKeydown);
-      } else {
-        this._removeListeners();
       }
     }
     _syncValueState() {
