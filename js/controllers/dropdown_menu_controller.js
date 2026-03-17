@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Replicates Radix DropdownMenu behavior
-// Click to open, keyboard navigation, sub-menus, close on outside click
+// Uses Stimulus declarative click@window for outside click (no flicker)
 export default class extends Controller {
   static targets = ["trigger", "content", "item", "sub", "subTrigger", "subContent"]
   static values = {
@@ -10,16 +10,14 @@ export default class extends Controller {
   }
 
   connect() {
-    this._onClickOutside = this._handleClickOutside.bind(this)
-    this._onKeydown = this._handleKeydown.bind(this)
     this._hideTimeouts = []
-    this._syncState()
+    this.contentTargets.forEach((el) => { el.dataset.state = "closed"; el.hidden = true })
+    this.triggerTargets.forEach((el) => { el.dataset.state = "closed"; el.setAttribute("aria-expanded", "false") })
   }
 
   disconnect() {
     this._hideTimeouts.forEach(id => clearTimeout(id))
     this._hideTimeouts = []
-    this._removeListeners()
   }
 
   toggle(event) {
@@ -27,137 +25,58 @@ export default class extends Controller {
     this.openValue = !this.openValue
   }
 
-  show() { this.openValue = true }
-  hide() { this.openValue = false }
+  // Wired as click@window->shadcn--dropdown-menu#hide
+  hide(event) {
+    if (!this.openValue) return
+    if (event && event.target && this.element.contains(event.target)) return
+    this.openValue = false
+  }
 
-  openValueChanged() { this._syncState() }
+  // Wired as keydown.esc@window->shadcn--dropdown-menu#hideOnEscape
+  hideOnEscape() {
+    if (!this.openValue) return
+    this.openValue = false
+    this.triggerTargets[0]?.focus()
+  }
+
+  close() { this.openValue = false }
 
   selectItem(event) {
     const item = event.currentTarget
     if (item.dataset.disabled) return
-
-    // Dispatch custom event
     this.dispatch("select", { detail: { value: item.dataset.value } })
-
-    if (this.closeOnSelectValue) {
-      this.hide()
-    }
+    if (this.closeOnSelectValue) this.close()
   }
 
-  _syncState() {
-    if (!this._hideTimeouts) return
-    const state = this.openValue ? "open" : "closed"
-    this.element.dataset.state = state
+  // Keyboard nav within the open menu
+  navigate(event) {
+    if (!this.openValue) return
 
-    this.triggerTargets.forEach((el) => {
-      el.dataset.state = state
-      el.setAttribute("aria-expanded", String(this.openValue))
-      el.setAttribute("aria-haspopup", "menu")
-    })
-
-    this.contentTargets.forEach((el) => {
-      el.dataset.state = state
-      if (this.openValue) {
-        el.hidden = false
-        this._positionContent(el)
-        requestAnimationFrame(() => {
-          const firstItem = el.querySelector('[data-slot*="menu-item"]:not([data-disabled])')
-          if (firstItem) firstItem.focus()
-        })
-      } else {
-        this._hideAfterAnimation(el)
-      }
-    })
-
-    if (this.openValue) {
-      document.addEventListener("click", this._onClickOutside, true)
-      document.addEventListener("keydown", this._onKeydown)
-    } else {
-      this._removeListeners()
-    }
-  }
-
-  _positionContent(content) {
-    if (!this.hasTriggerTarget) return
-    const trigger = this.triggerTarget
-    const rect = trigger.getBoundingClientRect()
-    const viewport = { width: window.innerWidth, height: window.innerHeight }
-
-    // Reset position
-    content.style.position = "fixed"
-    content.style.zIndex = "50"
-
-    // Position below trigger by default
-    let top = rect.bottom + 4
-    let left = rect.left
-
-    // Measure content
-    const contentRect = content.getBoundingClientRect()
-
-    // Flip if needed
-    if (top + contentRect.height > viewport.height) {
-      top = rect.top - contentRect.height - 4
-      content.dataset.side = "top"
-    } else {
-      content.dataset.side = "bottom"
-    }
-
-    // Prevent overflow right
-    if (left + contentRect.width > viewport.width) {
-      left = viewport.width - contentRect.width - 8
-    }
-
-    // Prevent overflow left
-    if (left < 8) left = 8
-
-    content.style.top = `${top}px`
-    content.style.left = `${left}px`
-  }
-
-  _handleClickOutside(event) {
-    if (!this.element.contains(event.target)) {
-      this.hide()
-    }
-  }
-
-  _handleKeydown(event) {
     switch (event.key) {
-      case "Escape":
-        event.preventDefault()
-        this.hide()
-        if (this.hasTriggerTarget) this.triggerTarget.focus()
-        break
-
       case "ArrowDown": {
         event.preventDefault()
         const items = this._getMenuItems()
         const current = items.indexOf(document.activeElement)
-        const next = current < items.length - 1 ? current + 1 : 0
-        items[next]?.focus()
+        items[(current + 1) % items.length]?.focus()
         break
       }
-
       case "ArrowUp": {
         event.preventDefault()
         const items = this._getMenuItems()
         const current = items.indexOf(document.activeElement)
-        const prev = current > 0 ? current - 1 : items.length - 1
-        items[prev]?.focus()
+        items[(current - 1 + items.length) % items.length]?.focus()
         break
       }
-
       case "Home":
         event.preventDefault()
         this._getMenuItems()[0]?.focus()
         break
-
       case "End": {
         event.preventDefault()
         const items = this._getMenuItems()
         items[items.length - 1]?.focus()
         break
       }
-
       case "Enter":
       case " ":
         if (document.activeElement?.matches('[data-slot*="menu-item"]')) {
@@ -165,9 +84,7 @@ export default class extends Controller {
           document.activeElement.click()
         }
         break
-
       case "ArrowRight": {
-        // Open sub-menu
         const subTrigger = document.activeElement?.closest('[data-slot*="sub-trigger"]')
         if (subTrigger) {
           event.preventDefault()
@@ -176,15 +93,12 @@ export default class extends Controller {
           if (subContent) {
             subContent.hidden = false
             subContent.dataset.state = "open"
-            const firstItem = subContent.querySelector('[data-slot*="menu-item"]:not([data-disabled])')
-            firstItem?.focus()
+            subContent.querySelector('[data-slot*="menu-item"]:not([data-disabled])')?.focus()
           }
         }
         break
       }
-
       case "ArrowLeft": {
-        // Close sub-menu
         const subContent = document.activeElement?.closest('[data-slot*="sub-content"]')
         if (subContent) {
           event.preventDefault()
@@ -199,19 +113,77 @@ export default class extends Controller {
     }
   }
 
+  openValueChanged() {
+    if (!this._hideTimeouts) return
+    this._render()
+  }
+
+  _render() {
+    const open = this.openValue
+    const state = open ? "open" : "closed"
+
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
+
+    this.element.dataset.state = state
+    this.triggerTargets.forEach((el) => {
+      el.dataset.state = state
+      el.setAttribute("aria-expanded", String(open))
+      el.setAttribute("aria-haspopup", "menu")
+    })
+
+    this.contentTargets.forEach((el) => {
+      if (open) {
+        el.getAnimations().forEach(a => a.cancel())
+        el.hidden = false
+        el.dataset.state = "open"
+        requestAnimationFrame(() => this._positionContent(el))
+        requestAnimationFrame(() => {
+          el.querySelector('[data-slot*="menu-item"]:not([data-disabled])')?.focus()
+        })
+      } else {
+        el.dataset.state = "closed"
+        const animations = el.getAnimations()
+        if (animations.length > 0) {
+          Promise.all(animations.map(a => a.finished)).then(() => {
+            if (el.dataset.state === "closed") el.hidden = true
+          }).catch(() => {})
+        } else {
+          el.hidden = true
+        }
+      }
+    })
+  }
+
+  _positionContent(content) {
+    if (!this.hasTriggerTarget) return
+    const rect = this.triggerTarget.getBoundingClientRect()
+
+    content.style.position = "fixed"
+    content.style.zIndex = "50"
+
+    let top = rect.bottom + 4
+    let left = rect.left
+    const contentRect = content.getBoundingClientRect()
+
+    if (top + contentRect.height > window.innerHeight) {
+      top = rect.top - contentRect.height - 4
+      content.dataset.side = "top"
+    } else {
+      content.dataset.side = "bottom"
+    }
+
+    if (left + contentRect.width > window.innerWidth) left = window.innerWidth - contentRect.width - 8
+    if (left < 8) left = 8
+
+    content.style.top = `${top}px`
+    content.style.left = `${left}px`
+  }
+
   _getMenuItems() {
     if (!this.hasContentTarget) return []
     return Array.from(this.contentTarget.querySelectorAll(
       '[data-slot*="menu-item"]:not([data-disabled]), [data-slot*="checkbox-item"]:not([data-disabled]), [data-slot*="radio-item"]:not([data-disabled]), [data-slot*="sub-trigger"]:not([data-disabled])'
     )).filter((el) => !el.closest("[hidden]"))
-  }
-
-  _removeListeners() {
-    document.removeEventListener("click", this._onClickOutside, true)
-    document.removeEventListener("keydown", this._onKeydown)
-  }
-
-  _hideAfterAnimation(el) {
-    this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
   }
 }

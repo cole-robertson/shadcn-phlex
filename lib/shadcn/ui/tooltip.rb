@@ -38,7 +38,8 @@ module Shadcn
           data_slot: "tooltip-trigger",
           data_shadcn__tooltip_target: "trigger",
           data_action: "mouseenter->shadcn--tooltip#mouseEnter mouseleave->shadcn--tooltip#mouseLeave focusin->shadcn--tooltip#focusIn focusout->shadcn--tooltip#focusOut",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end

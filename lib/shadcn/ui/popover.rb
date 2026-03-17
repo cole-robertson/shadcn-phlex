@@ -17,7 +17,8 @@ module Shadcn
       def build_attrs
         @attrs.merge(
           data_slot: "popover",
-          data_controller: "shadcn--popover"
+          data_controller: "shadcn--popover",
+          data_action: "click@window->shadcn--popover#hide keydown.esc@window->shadcn--popover#hideOnEscape"
         )
       end
     end
@@ -38,7 +39,8 @@ module Shadcn
           data_slot: "popover-trigger",
           data_shadcn__popover_target: "trigger",
           data_action: "click->shadcn--popover#toggle",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end

@@ -38,7 +38,8 @@ module Shadcn
           data_slot: "drawer-trigger",
           data_shadcn__drawer_target: "trigger",
           data_action: "click->shadcn--drawer#show",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end

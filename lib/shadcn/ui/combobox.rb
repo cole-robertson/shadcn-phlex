@@ -27,6 +27,7 @@ module Shadcn
         @attrs.merge(
           data_slot: "combobox",
           data_controller: "shadcn--combobox",
+          data_action: "click@window->shadcn--combobox#hide keydown.esc@window->shadcn--combobox#hideOnEscape",
           class: classes
         )
       end

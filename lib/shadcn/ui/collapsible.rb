@@ -42,7 +42,8 @@ module Shadcn
           data_slot: "collapsible-trigger",
           data_shadcn__collapsible_target: "trigger",
           data_action: "click->shadcn--collapsible#toggle",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end

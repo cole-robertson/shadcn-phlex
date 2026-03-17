@@ -39,7 +39,8 @@ module Shadcn
           data_slot: "alert-dialog-trigger",
           data_shadcn__dialog_target: "trigger",
           data_action: "click->shadcn--dialog#show",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end

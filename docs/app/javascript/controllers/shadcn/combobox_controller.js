@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Combobox: filterable select with search input
-// Combines Input + Popover + List pattern
+// Uses Stimulus declarative click@window for outside click (no flicker)
 export default class extends Controller {
   static targets = ["input", "content", "item", "empty", "hiddenInput", "value"]
   static values = {
@@ -12,25 +12,36 @@ export default class extends Controller {
   }
 
   connect() {
-    this._onClickOutside = this._handleClickOutside.bind(this)
     this._hideTimeouts = []
     this._allItems = this.itemTargets.map((el) => ({
       element: el,
       value: el.dataset.value || "",
       label: el.textContent.trim().toLowerCase(),
     }))
-    this._syncState()
+    this.contentTargets.forEach((el) => { el.dataset.state = "closed"; el.hidden = true })
   }
 
   disconnect() {
     this._hideTimeouts.forEach(id => clearTimeout(id))
     this._hideTimeouts = []
-    document.removeEventListener("click", this._onClickOutside, true)
   }
 
   toggle() { this.openValue = !this.openValue }
-  show() { this.openValue = true }
-  hide() { this.openValue = false }
+
+  // Wired as click@window->shadcn--combobox#hide
+  hide(event) {
+    if (!this.openValue) return
+    if (event && event.target && this.element.contains(event.target)) return
+    this.openValue = false
+  }
+
+  // Wired as keydown.esc@window->shadcn--combobox#hideOnEscape
+  hideOnEscape() {
+    if (!this.openValue) return
+    this.openValue = false
+  }
+
+  close() { this.openValue = false }
 
   filter(event) {
     const query = event.currentTarget.value.toLowerCase()
@@ -42,10 +53,7 @@ export default class extends Controller {
       if (match) visibleCount++
     })
 
-    // Show/hide empty state
-    this.emptyTargets.forEach((el) => {
-      el.hidden = visibleCount > 0
-    })
+    this.emptyTargets.forEach((el) => { el.hidden = visibleCount > 0 })
   }
 
   selectItem(event) {
@@ -56,23 +64,20 @@ export default class extends Controller {
     const label = item.textContent.trim()
 
     this.valueValue = value
-
-    // Update display
     this.valueTargets.forEach((el) => { el.textContent = label })
     this.inputTargets.forEach((el) => { el.value = "" })
 
     this.dispatch("change", { detail: { value, label } })
-    this.hide()
+    this.openValue = false
   }
 
   keydown(event) {
     if (!this.openValue && (event.key === "ArrowDown" || event.key === "Enter")) {
       event.preventDefault()
-      this.show()
+      this.openValue = true
       return
     }
-
-    if (event.key === "Escape") { this.hide(); return }
+    if (event.key === "Escape") { this.openValue = false; return }
 
     const items = this._getVisibleItems()
     const current = items.indexOf(document.activeElement)
@@ -97,37 +102,44 @@ export default class extends Controller {
     }
   }
 
-  openValueChanged() { this._syncOpenState() }
-  valueValueChanged() { this._syncValueState() }
-
-  _syncState() {
-    this._syncOpenState()
-    this._syncValueState()
+  openValueChanged() {
+    if (!this._hideTimeouts) return
+    this._render()
   }
 
-  _syncOpenState() {
-    if (!this._hideTimeouts) return
+  valueValueChanged() { this._syncValueState() }
+
+  _render() {
+    const open = this.openValue
+
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
+
     this.contentTargets.forEach((el) => {
-      el.dataset.state = this.openValue ? "open" : "closed"
-      if (this.openValue) {
+      if (open) {
+        el.getAnimations().forEach(a => a.cancel())
         el.hidden = false
+        el.dataset.state = "open"
         this._position(el)
         requestAnimationFrame(() => {
           if (this.hasInputTarget) this.inputTarget.focus()
         })
       } else {
-        this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
+        el.dataset.state = "closed"
         // Reset filter
         this._allItems.forEach(({ element }) => { element.hidden = false })
-        this.emptyTargets.forEach((el) => { el.hidden = true })
+        this.emptyTargets.forEach((em) => { em.hidden = true })
+
+        const animations = el.getAnimations()
+        if (animations.length > 0) {
+          Promise.all(animations.map(a => a.finished)).then(() => {
+            if (el.dataset.state === "closed") el.hidden = true
+          }).catch(() => {})
+        } else {
+          el.hidden = true
+        }
       }
     })
-
-    if (this.openValue) {
-      requestAnimationFrame(() => document.addEventListener("click", this._onClickOutside, true))
-    } else {
-      document.removeEventListener("click", this._onClickOutside, true)
-    }
   }
 
   _syncValueState() {
@@ -136,16 +148,11 @@ export default class extends Controller {
       item.dataset.state = isSelected ? "checked" : "unchecked"
       item.setAttribute("aria-selected", String(isSelected))
     })
-
-    this.hiddenInputTargets.forEach((input) => {
-      input.value = this.valueValue
-    })
+    this.hiddenInputTargets.forEach((input) => { input.value = this.valueValue })
   }
 
   _position(content) {
-    const anchor = this.element
-    const rect = anchor.getBoundingClientRect()
-
+    const rect = this.element.getBoundingClientRect()
     content.style.position = "fixed"
     content.style.zIndex = "50"
     content.style.width = `${rect.width}px`
@@ -155,9 +162,5 @@ export default class extends Controller {
 
   _getVisibleItems() {
     return this.itemTargets.filter((el) => !el.hidden && !el.dataset.disabled)
-  }
-
-  _handleClickOutside(event) {
-    if (!this.element.contains(event.target)) this.hide()
   }
 }

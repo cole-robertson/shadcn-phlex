@@ -18,7 +18,8 @@ module Shadcn
       def build_attrs
         @attrs.merge(
           data_slot: "dropdown-menu",
-          data_controller: "shadcn--dropdown-menu"
+          data_controller: "shadcn--dropdown-menu",
+          data_action: "click@window->shadcn--dropdown-menu#hide keydown.esc@window->shadcn--dropdown-menu#hideOnEscape keydown->shadcn--dropdown-menu#navigate"
         )
       end
     end
@@ -39,7 +40,8 @@ module Shadcn
           data_slot: "dropdown-menu-trigger",
           data_shadcn__dropdown_menu_target: "trigger",
           data_action: "click->shadcn--dropdown-menu#toggle",
-          role: "button"
+          role: "button",
+          style: "display: inline-block"
         )
       end
     end
