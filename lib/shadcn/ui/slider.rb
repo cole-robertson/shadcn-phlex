@@ -17,18 +17,21 @@ module Shadcn
           if @name
             input(type: "hidden", name: @name, value: @value.to_s, data_shadcn__slider_target: "input")
           end
+          pct = ((@value.to_f - @min) / (@max - @min) * 100).clamp(0, 100)
+
           span(
             data_slot: "slider-track",
             data_shadcn__slider_target: "track",
             data_action: "click->shadcn--slider#clickTrack",
+            data_orientation: "horizontal",
             class: "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
           ) do
-            pct = ((@value.to_f - @min) / (@max - @min) * 100).clamp(0, 100)
             span(
               data_slot: "slider-range",
               data_shadcn__slider_target: "range",
+              data_orientation: "horizontal",
               class: "absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full",
-              style: "width: #{pct}%"
+              style: "left: 0; width: #{pct}%"
             )
           end
 
@@ -36,7 +39,8 @@ module Shadcn
             data_slot: "slider-thumb",
             data_shadcn__slider_target: "thumb",
             data_action: "pointerdown->shadcn--slider#startDrag keydown->shadcn--slider#keydown",
-            class: "block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
+            class: "absolute block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
+            style: "left: calc(#{pct}% - 8px)",
             role: "slider",
             tabindex: "0",
             aria_valuemin: @min,
