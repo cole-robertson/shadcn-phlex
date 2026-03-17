@@ -19,12 +19,8 @@ module Pages
                 ui_alert_dialog_description { "This action cannot be undone. This will permanently delete your account and remove your data from our servers." }
               end
               ui_alert_dialog_footer do
-                ui_alert_dialog_cancel do
-                  ui_button(variant: :outline) { "Cancel" }
-                end
-                ui_alert_dialog_action do
-                  ui_button(variant: :destructive) { "Yes, delete account" }
-                end
+                ui_alert_dialog_cancel { "Cancel" }
+                ui_alert_dialog_action(variant: :destructive) { "Yes, delete account" }
               end
             end
           end
@@ -39,8 +35,8 @@ module Pages
                 ui_alert_dialog_description { "This action cannot be undone." }
               end
               ui_alert_dialog_footer do
-                ui_alert_dialog_cancel { ui_button(variant: :outline) { "Cancel" } }
-                ui_alert_dialog_action { ui_button(variant: :destructive) { "Continue" } }
+                ui_alert_dialog_cancel { "Cancel" }
+                ui_alert_dialog_action(variant: :destructive) { "Continue" }
               end
             end
           end
