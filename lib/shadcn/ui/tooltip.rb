@@ -28,7 +28,7 @@ module Shadcn
       end
 
       def view_template(&block)
-        button(**build_attrs, &block)
+        div(**build_attrs, &block)
       end
 
       private
@@ -38,7 +38,7 @@ module Shadcn
           data_slot: "tooltip-trigger",
           data_shadcn__tooltip_target: "trigger",
           data_action: "mouseenter->shadcn--tooltip#mouseEnter mouseleave->shadcn--tooltip#mouseLeave focusin->shadcn--tooltip#focusIn focusout->shadcn--tooltip#focusOut",
-          type: "button"
+          role: "button"
         )
       end
     end

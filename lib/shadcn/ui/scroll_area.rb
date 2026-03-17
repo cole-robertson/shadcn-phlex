@@ -13,8 +13,7 @@ module Shadcn
           div(
             data_slot: "scroll-area-viewport",
             data_shadcn__scroll_area_target: "viewport",
-            class: "size-full overflow-y-auto overflow-x-hidden rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 [&>div]:!block",
-            style: "overflow: auto;",
+            class: "size-full overflow-auto rounded-[inherit]",
             &block
           )
           render ScrollBar.new

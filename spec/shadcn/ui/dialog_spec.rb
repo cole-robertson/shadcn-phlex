@@ -17,11 +17,12 @@ RSpec.describe Shadcn::UI::Dialog do
 end
 
 RSpec.describe Shadcn::UI::DialogTrigger do
-  it "renders a button with show action" do
+  it "renders a wrapper div with show action" do
     el = render_root(described_class.new { "Open" })
-    expect(el.name).to eq("button")
+    expect(el.name).to eq("div")
     expect(el["data-slot"]).to eq("dialog-trigger")
     expect(el["data-action"]).to include("click->shadcn--dialog#show")
+    expect(el["role"]).to eq("button")
   end
 end
 

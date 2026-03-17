@@ -10,8 +10,8 @@ module Pages
       def view_template
         preview("Default") do
           ui_dialog do
-            ui_dialog_trigger(class: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90") do
-              plain "Open Dialog"
+            ui_dialog_trigger do
+              ui_button { "Open Dialog" }
             end
             ui_dialog_content do
               ui_dialog_header do
@@ -23,8 +23,8 @@ module Pages
                 ui_text_field(label: "Username", name: "username", placeholder: "@johndoe")
               end
               ui_dialog_footer do
-                ui_dialog_close(class: "inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground") do
-                  plain "Cancel"
+                ui_dialog_close do
+                  ui_button(variant: :outline) { "Cancel" }
                 end
                 ui_button { "Save changes" }
               end
@@ -34,7 +34,7 @@ module Pages
 
         code <<~RUBY
           ui_dialog do
-            ui_dialog_trigger { "Open" }
+            ui_dialog_trigger { ui_button { "Open" } }
             ui_dialog_content do
               ui_dialog_header do
                 ui_dialog_title { "Title" }
@@ -42,7 +42,7 @@ module Pages
               end
               # content here
               ui_dialog_footer do
-                ui_dialog_close { "Cancel" }
+                ui_dialog_close { ui_button(variant: :outline) { "Cancel" } }
                 ui_button { "Confirm" }
               end
             end

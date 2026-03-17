@@ -30,7 +30,7 @@ module Shadcn
       end
 
       def view_template(&block)
-        button(**build_attrs, &block)
+        div(**build_attrs, &block)
       end
 
       private
@@ -40,7 +40,7 @@ module Shadcn
           data_slot: "dialog-trigger",
           data_shadcn__dialog_target: "trigger",
           data_action: "click->shadcn--dialog#show",
-          type: "button"
+          role: "button"
         )
       end
     end

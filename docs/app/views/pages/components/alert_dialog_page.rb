@@ -10,8 +10,8 @@ module Pages
       def view_template
         preview("Default") do
           ui_alert_dialog do
-            ui_alert_dialog_trigger(class: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90") do
-              plain "Delete Account"
+            ui_alert_dialog_trigger do
+              ui_button(variant: :destructive) { "Delete Account" }
             end
             ui_alert_dialog_content do
               ui_alert_dialog_header do
@@ -19,8 +19,12 @@ module Pages
                 ui_alert_dialog_description { "This action cannot be undone. This will permanently delete your account and remove your data from our servers." }
               end
               ui_alert_dialog_footer do
-                ui_alert_dialog_cancel { "Cancel" }
-                ui_alert_dialog_action { "Yes, delete account" }
+                ui_alert_dialog_cancel do
+                  ui_button(variant: :outline) { "Cancel" }
+                end
+                ui_alert_dialog_action do
+                  ui_button(variant: :destructive) { "Yes, delete account" }
+                end
               end
             end
           end
@@ -28,15 +32,15 @@ module Pages
 
         code <<~RUBY
           ui_alert_dialog do
-            ui_alert_dialog_trigger { "Delete Account" }
+            ui_alert_dialog_trigger { ui_button(variant: :destructive) { "Delete" } }
             ui_alert_dialog_content do
               ui_alert_dialog_header do
                 ui_alert_dialog_title { "Are you sure?" }
                 ui_alert_dialog_description { "This action cannot be undone." }
               end
               ui_alert_dialog_footer do
-                ui_alert_dialog_cancel { "Cancel" }
-                ui_alert_dialog_action { "Continue" }
+                ui_alert_dialog_cancel { ui_button(variant: :outline) { "Cancel" } }
+                ui_alert_dialog_action { ui_button(variant: :destructive) { "Continue" } }
               end
             end
           end
