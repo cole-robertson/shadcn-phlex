@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "drawer")
+        @attrs.merge(
+          data_slot: "drawer",
+          data_controller: "shadcn--drawer"
+        )
       end
     end
 
@@ -31,7 +34,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "drawer-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "drawer-trigger",
+          data_shadcn__drawer_target: "trigger",
+          data_action: "click->shadcn--drawer#show",
+          type: "button"
+        )
       end
     end
 
@@ -47,7 +55,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "drawer-close", type: "button")
+        @attrs.merge(
+          data_slot: "drawer-close",
+          data_action: "click->shadcn--drawer#hide",
+          type: "button"
+        )
       end
     end
 
@@ -69,7 +81,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "drawer-overlay", class: classes)
+        @attrs.merge(
+          data_slot: "drawer-overlay",
+          data_shadcn__drawer_target: "overlay",
+          data_action: "click->shadcn--drawer#clickOverlay",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -100,7 +118,9 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "drawer-content",
+          data_shadcn__drawer_target: "content",
           data_vaul_drawer_direction: @direction,
+          hidden: true,
           class: classes
         )
       end

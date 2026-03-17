@@ -25,6 +25,7 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "navigation-menu",
+          data_controller: "shadcn--navigation-menu",
           data_viewport: @viewport,
           class: classes
         )
@@ -107,7 +108,13 @@ module Shadcn
           "data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "navigation-menu-trigger", type: "button", class: classes)
+        @attrs.merge(
+          data_slot: "navigation-menu-trigger",
+          data_shadcn__navigation_menu_target: "trigger",
+          data_action: "mouseenter->shadcn--navigation-menu#enterTrigger mouseleave->shadcn--navigation-menu#leaveTrigger click->shadcn--navigation-menu#clickTrigger keydown->shadcn--navigation-menu#keydown",
+          type: "button",
+          class: classes
+        )
       end
     end
 
@@ -132,7 +139,13 @@ module Shadcn
           "md:absolute md:w-auto",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "navigation-menu-content", class: classes)
+        @attrs.merge(
+          data_slot: "navigation-menu-content",
+          data_shadcn__navigation_menu_target: "content",
+          data_action: "mouseenter->shadcn--navigation-menu#enterContent mouseleave->shadcn--navigation-menu#leaveContent keydown->shadcn--navigation-menu#contentKeydown",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -156,7 +169,12 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:zoom-in-90",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "navigation-menu-viewport", class: classes)
+        @attrs.merge(
+          data_slot: "navigation-menu-viewport",
+          data_shadcn__navigation_menu_target: "viewport",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -185,6 +203,7 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "navigation-menu-link",
+          data_shadcn__navigation_menu_target: "link",
           data_active: @active,
           href: @href,
           class: classes

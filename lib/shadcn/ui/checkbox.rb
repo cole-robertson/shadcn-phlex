@@ -10,6 +10,7 @@ module Shadcn
       end
 
       def view_template
+        span(data_controller: "shadcn--checkbox") do
         button(**build_attrs) do
           if @checked
             span(
@@ -32,6 +33,7 @@ module Shadcn
             end
           end
         end
+        end
       end
 
       private
@@ -49,6 +51,8 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "checkbox",
+          data_shadcn__checkbox_target: "button",
+          data_action: "click->shadcn--checkbox#toggle",
           data_state: @checked ? "checked" : "unchecked",
           role: "checkbox",
           type: "button",

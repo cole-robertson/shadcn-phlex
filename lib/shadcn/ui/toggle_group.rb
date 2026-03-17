@@ -31,6 +31,8 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "toggle-group",
+          data_controller: "shadcn--toggle-group",
+          data_shadcn__toggle_group_type_value: "single",
           data_variant: @variant,
           data_size: @size,
           data_spacing: @spacing,
@@ -50,14 +52,22 @@ module Shadcn
       end
 
       def view_template(&block)
-        render Toggle.new(
-          variant: @variant,
-          size: @size,
-          pressed: @pressed,
-          data_value: @value,
+        button(**build_attrs, &block)
+      end
+
+      private
+
+      def build_attrs
+        classes = cn(Toggle::VARIANTS.render(variant: @variant, size: @size), @attrs.delete(:class))
+        @attrs.merge(
           data_slot: "toggle-group-item",
-          **@attrs,
-          &block
+          data_shadcn__toggle_group_target: "item",
+          data_action: "click->shadcn--toggle-group#toggle keydown->shadcn--toggle-group#keydown",
+          data_value: @value,
+          data_state: @pressed ? "on" : "off",
+          type: "button",
+          aria_pressed: @pressed,
+          class: classes
         )
       end
     end

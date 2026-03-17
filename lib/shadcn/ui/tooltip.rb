@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "tooltip")
+        @attrs.merge(
+          data_slot: "tooltip",
+          data_controller: "shadcn--tooltip"
+        )
       end
     end
 
@@ -31,7 +34,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "tooltip-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "tooltip-trigger",
+          data_shadcn__tooltip_target: "trigger",
+          data_action: "mouseenter->shadcn--tooltip#mouseEnter mouseleave->shadcn--tooltip#mouseLeave focusin->shadcn--tooltip#focusIn focusout->shadcn--tooltip#focusOut",
+          type: "button"
+        )
       end
     end
 
@@ -55,7 +63,14 @@ module Shadcn
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "tooltip-content", role: "tooltip", class: classes)
+        @attrs.merge(
+          data_slot: "tooltip-content",
+          data_shadcn__tooltip_target: "content",
+          data_action: "mouseenter->shadcn--tooltip#contentMouseEnter mouseleave->shadcn--tooltip#contentMouseLeave",
+          role: "tooltip",
+          hidden: true,
+          class: classes
+        )
       end
     end
   end

@@ -23,7 +23,13 @@ module Shadcn
           position_classes,
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "toaster", data_position: @position, class: classes)
+        @attrs.merge(
+          data_slot: "toaster",
+          data_controller: "shadcn--toast",
+          data_shadcn__toast_target: "container",
+          data_position: @position,
+          class: classes
+        )
       end
 
       def position_classes

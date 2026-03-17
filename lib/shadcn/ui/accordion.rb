@@ -3,10 +3,13 @@
 module Shadcn
   module UI
     # Port of shadcn/ui Accordion
-    # Uses data attributes for Stimulus.js or Alpine.js interactivity
-    # data-state="open" / data-state="closed" controls visibility
+    # Wired to shadcn--accordion Stimulus controller
+    # type: "single" (default) or "multiple"
+    # collapsible: true allows closing all items in single mode
     class Accordion < Base
-      def initialize(**attrs)
+      def initialize(type: "single", collapsible: false, **attrs)
+        @type = type
+        @collapsible = collapsible
         @attrs = attrs
       end
 
@@ -18,12 +21,19 @@ module Shadcn
 
       def build_attrs
         classes = cn("w-full", @attrs.delete(:class))
-        @attrs.merge(data_slot: "accordion", class: classes)
+        @attrs.merge(
+          data_slot: "accordion",
+          data_controller: "shadcn--accordion",
+          data_shadcn__accordion_type_value: @type,
+          data_shadcn__accordion_collapsible_value: @collapsible,
+          class: classes
+        )
       end
     end
 
     class AccordionItem < Base
-      def initialize(**attrs)
+      def initialize(open: false, **attrs)
+        @open = open
         @attrs = attrs
       end
 
@@ -35,7 +45,12 @@ module Shadcn
 
       def build_attrs
         classes = cn("border-b last:border-b-0", @attrs.delete(:class))
-        @attrs.merge(data_slot: "accordion-item", class: classes)
+        @attrs.merge(
+          data_slot: "accordion-item",
+          data_state: @open ? "open" : "closed",
+          data_shadcn__accordion_target: "item",
+          class: classes
+        )
       end
     end
 
@@ -48,7 +63,6 @@ module Shadcn
         h3(data_slot: "accordion-header", class: "flex") do
           button(**build_attrs) do
             yield if block_given?
-            # Chevron icon (SVG)
             svg(
               xmlns: "http://www.w3.org/2000/svg",
               width: "16", height: "16",
@@ -80,7 +94,10 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "accordion-trigger",
+          data_shadcn__accordion_target: "trigger",
+          data_action: "click->shadcn--accordion#toggle keydown->shadcn--accordion#keydown",
           type: "button",
+          aria_expanded: "false",
           class: classes
         )
       end
@@ -105,7 +122,13 @@ module Shadcn
           "data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "accordion-content", class: classes)
+        @attrs.merge(
+          data_slot: "accordion-content",
+          data_shadcn__accordion_target: "content",
+          role: "region",
+          hidden: true,
+          class: classes
+        )
       end
     end
   end

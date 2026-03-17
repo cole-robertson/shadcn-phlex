@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "hover-card")
+        @attrs.merge(
+          data_slot: "hover-card",
+          data_controller: "shadcn--hover-card"
+        )
       end
     end
 
@@ -31,7 +34,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "hover-card-trigger")
+        @attrs.merge(
+          data_slot: "hover-card-trigger",
+          data_shadcn__hover_card_target: "trigger",
+          data_action: "mouseenter->shadcn--hover-card#triggerEnter mouseleave->shadcn--hover-card#triggerLeave"
+        )
       end
     end
 
@@ -55,7 +62,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "hover-card-content", class: classes)
+        @attrs.merge(
+          data_slot: "hover-card-content",
+          data_shadcn__hover_card_target: "content",
+          data_action: "mouseenter->shadcn--hover-card#contentEnter mouseleave->shadcn--hover-card#contentLeave",
+          hidden: true,
+          class: classes
+        )
       end
     end
   end

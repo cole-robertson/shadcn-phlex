@@ -19,7 +19,9 @@ module Shadcn
       def build_attrs
         @attrs.merge(
           data_slot: "collapsible",
-          data_state: @open ? "open" : "closed"
+          data_state: @open ? "open" : "closed",
+          data_controller: "shadcn--collapsible",
+          data_shadcn__collapsible_open_value: @open
         )
       end
     end
@@ -36,7 +38,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "collapsible-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "collapsible-trigger",
+          data_shadcn__collapsible_target: "trigger",
+          data_action: "click->shadcn--collapsible#toggle",
+          type: "button"
+        )
       end
     end
 
@@ -57,7 +64,11 @@ module Shadcn
           "data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "collapsible-content", class: classes)
+        @attrs.merge(
+          data_slot: "collapsible-content",
+          data_shadcn__collapsible_target: "content",
+          class: classes
+        )
       end
     end
   end

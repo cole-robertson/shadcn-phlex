@@ -16,7 +16,12 @@ module Shadcn
 
       def build_attrs
         classes = cn("grid gap-3", @attrs.delete(:class))
-        @attrs.merge(data_slot: "radio-group", role: "radiogroup", class: classes)
+        @attrs.merge(
+          data_slot: "radio-group",
+          data_controller: "shadcn--radio-group",
+          role: "radiogroup",
+          class: classes
+        )
       end
     end
 
@@ -60,6 +65,8 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "radio-group-item",
+          data_shadcn__radio_group_target: "item",
+          data_action: "click->shadcn--radio-group#select keydown->shadcn--radio-group#keydown",
           data_state: @checked ? "checked" : "unchecked",
           data_value: @value,
           role: "radio",

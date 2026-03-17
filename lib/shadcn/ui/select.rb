@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "select")
+        @attrs.merge(
+          data_slot: "select",
+          data_controller: "shadcn--select"
+        )
       end
     end
 
@@ -65,6 +68,8 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "select-trigger",
+          data_shadcn__select_target: "trigger",
+          data_action: "click->shadcn--select#toggle",
           type: "button",
           role: "combobox",
           class: classes
@@ -91,7 +96,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "select-value")
+        @attrs.merge(
+          data_slot: "select-value",
+          data_shadcn__select_target: "value"
+        )
       end
     end
 
@@ -120,7 +128,14 @@ module Shadcn
           popper_classes,
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "select-content", data_position: @position, role: "listbox", class: classes)
+        @attrs.merge(
+          data_slot: "select-content",
+          data_shadcn__select_target: "content",
+          data_position: @position,
+          role: "listbox",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -152,8 +167,11 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "select-item",
+          data_shadcn__select_target: "item",
+          data_action: "click->shadcn--select#selectItem",
           data_value: @value,
           role: "option",
+          tabindex: "-1",
           class: classes
         )
       end

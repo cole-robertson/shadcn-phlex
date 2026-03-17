@@ -3,9 +3,10 @@
 module Shadcn
   module UI
     # Port of shadcn/ui Tabs
-    # Uses data-state="active" for active tab styling
+    # Wired to shadcn--tabs Stimulus controller
     class Tabs < Base
-      def initialize(orientation: :horizontal, **attrs)
+      def initialize(value: nil, orientation: :horizontal, **attrs)
+        @value = value
         @orientation = orientation
         @attrs = attrs
       end
@@ -21,11 +22,15 @@ module Shadcn
           "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
           @attrs.delete(:class)
         )
-        @attrs.merge(
+        result = @attrs.merge(
           data_slot: "tabs",
           data_orientation: @orientation,
+          data_controller: "shadcn--tabs",
+          data_shadcn__tabs_orientation_value: @orientation,
           class: classes
         )
+        result[:data_shadcn__tabs_value_value] = @value if @value
+        result
       end
     end
 
@@ -62,6 +67,7 @@ module Shadcn
         @attrs.merge(
           data_slot: "tabs-list",
           data_variant: @variant,
+          data_shadcn__tabs_target: "list",
           role: "tablist",
           class: classes
         )
@@ -69,7 +75,8 @@ module Shadcn
     end
 
     class TabsTrigger < Base
-      def initialize(**attrs)
+      def initialize(value:, **attrs)
+        @value = value
         @attrs = attrs
       end
 
@@ -96,6 +103,9 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "tabs-trigger",
+          data_value: @value,
+          data_shadcn__tabs_target: "trigger",
+          data_action: "click->shadcn--tabs#select keydown->shadcn--tabs#keydown",
           role: "tab",
           type: "button",
           class: classes
@@ -104,7 +114,8 @@ module Shadcn
     end
 
     class TabsContent < Base
-      def initialize(**attrs)
+      def initialize(value:, **attrs)
+        @value = value
         @attrs = attrs
       end
 
@@ -116,7 +127,14 @@ module Shadcn
 
       def build_attrs
         classes = cn("flex-1 outline-none", @attrs.delete(:class))
-        @attrs.merge(data_slot: "tabs-content", role: "tabpanel", class: classes)
+        @attrs.merge(
+          data_slot: "tabs-content",
+          data_value: @value,
+          data_shadcn__tabs_target: "content",
+          role: "tabpanel",
+          hidden: true,
+          class: classes
+        )
       end
     end
   end

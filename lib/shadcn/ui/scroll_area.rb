@@ -12,6 +12,7 @@ module Shadcn
         div(**build_attrs) do
           div(
             data_slot: "scroll-area-viewport",
+            data_shadcn__scroll_area_target: "viewport",
             class: "size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
             &block
           )
@@ -23,7 +24,11 @@ module Shadcn
 
       def build_attrs
         classes = cn("relative", @attrs.delete(:class))
-        @attrs.merge(data_slot: "scroll-area", class: classes)
+        @attrs.merge(
+          data_slot: "scroll-area",
+          data_controller: "shadcn--scroll-area",
+          class: classes
+        )
       end
     end
 
@@ -37,6 +42,8 @@ module Shadcn
         div(**build_attrs) do
           div(
             data_slot: "scroll-area-thumb",
+            data_shadcn__scroll_area_target: "thumb",
+            data_action: "pointerdown->shadcn--scroll-area#startDrag",
             class: "relative flex-1 rounded-full bg-border"
           )
         end
@@ -58,6 +65,7 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "scroll-area-scrollbar",
+          data_shadcn__scroll_area_target: "scrollbar",
           data_orientation: @orientation,
           class: classes
         )

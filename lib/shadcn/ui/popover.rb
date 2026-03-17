@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "popover")
+        @attrs.merge(
+          data_slot: "popover",
+          data_controller: "shadcn--popover"
+        )
       end
     end
 
@@ -31,7 +34,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "popover-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "popover-trigger",
+          data_shadcn__popover_target: "trigger",
+          data_action: "click->shadcn--popover#toggle",
+          type: "button"
+        )
       end
     end
 
@@ -47,7 +55,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "popover-anchor")
+        @attrs.merge(
+          data_slot: "popover-anchor",
+          data_shadcn__popover_target: "anchor"
+        )
       end
     end
 
@@ -71,7 +82,12 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "popover-content", class: classes)
+        @attrs.merge(
+          data_slot: "popover-content",
+          data_shadcn__popover_target: "content",
+          hidden: true,
+          class: classes
+        )
       end
     end
 

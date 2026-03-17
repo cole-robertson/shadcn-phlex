@@ -1,0 +1,14 @@
+{
+  "name": "shadcn-phlex",
+  "version": "0.1.0",
+  "description": "Complete shadcn/ui component library for Phlex Rails with Stimulus controllers",
+  "type": "module",
+  "main": "js/controllers/index.js",
+  "exports": {
+    ".": "./js/controllers/index.js",
+    "./controllers/*": "./js/controllers/*"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.0"
+  }
+}

@@ -12,8 +12,10 @@ module Shadcn
       end
 
       def view_template
-        button(**build_attrs) do
-          span(**thumb_attrs)
+        span(data_controller: "shadcn--switch") do
+          button(**build_attrs) do
+            span(**thumb_attrs)
+          end
         end
       end
 
@@ -33,6 +35,8 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "switch",
+          data_shadcn__switch_target: "button",
+          data_action: "click->shadcn--switch#toggle",
           data_state: @checked ? "checked" : "unchecked",
           data_size: @size,
           role: "switch",
@@ -45,6 +49,7 @@ module Shadcn
       def thumb_attrs
         {
           data_slot: "switch-thumb",
+          data_shadcn__switch_target: "thumb",
           data_state: @checked ? "checked" : "unchecked",
           class: cn(
             "pointer-events-none block rounded-full bg-background ring-0 transition-transform",

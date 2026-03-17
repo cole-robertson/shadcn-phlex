@@ -51,6 +51,10 @@ module Shadcn
         classes = cn(VARIANTS.render(variant: @variant, size: @size), @attrs.delete(:class))
         @attrs.merge(
           data_slot: "toggle",
+          data_controller: "shadcn--toggle",
+          data_shadcn__toggle_target: "button",
+          data_action: "click->shadcn--toggle#toggle",
+          data_shadcn__toggle_pressed_value: @pressed,
           data_state: @pressed ? "on" : "off",
           type: "button",
           aria_pressed: @pressed,

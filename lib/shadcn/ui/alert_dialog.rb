@@ -15,7 +15,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "alert-dialog")
+        @attrs.merge(
+          data_slot: "alert-dialog",
+          data_controller: "shadcn--dialog",
+          data_shadcn__dialog_close_on_overlay_value: false
+        )
       end
     end
 
@@ -31,7 +35,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "alert-dialog-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "alert-dialog-trigger",
+          data_shadcn__dialog_target: "trigger",
+          data_action: "click->shadcn--dialog#show",
+          type: "button"
+        )
       end
     end
 
@@ -53,7 +62,12 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "alert-dialog-overlay", class: classes)
+        @attrs.merge(
+          data_slot: "alert-dialog-overlay",
+          data_shadcn__dialog_target: "overlay",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -83,8 +97,10 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "alert-dialog-content",
+          data_shadcn__dialog_target: "content",
           data_size: @size,
           role: "alertdialog",
+          hidden: true,
           class: classes
         )
       end
@@ -147,7 +163,11 @@ module Shadcn
 
       def build_attrs
         classes = cn("text-lg font-semibold", @attrs.delete(:class))
-        @attrs.merge(data_slot: "alert-dialog-title", class: classes)
+        @attrs.merge(
+          data_slot: "alert-dialog-title",
+          data_shadcn__dialog_target: "title",
+          class: classes
+        )
       end
     end
 
@@ -164,7 +184,11 @@ module Shadcn
 
       def build_attrs
         classes = cn("text-sm text-muted-foreground", @attrs.delete(:class))
-        @attrs.merge(data_slot: "alert-dialog-description", class: classes)
+        @attrs.merge(
+          data_slot: "alert-dialog-description",
+          data_shadcn__dialog_target: "description",
+          class: classes
+        )
       end
     end
 
@@ -188,7 +212,7 @@ module Shadcn
       end
 
       def view_template(&block)
-        render Button.new(variant: @variant, size: @size, data_slot: "alert-dialog-cancel", **@attrs, &block)
+        render Button.new(variant: @variant, size: @size, data_slot: "alert-dialog-cancel", data_action: "click->shadcn--dialog#hide", **@attrs, &block)
       end
     end
   end

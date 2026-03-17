@@ -3,8 +3,7 @@
 module Shadcn
   module UI
     # Port of shadcn/ui Dialog
-    # Requires JS (Stimulus/Alpine) to handle open/close state
-    # data-state="open" / data-state="closed" controls animations
+    # Wired to shadcn--dialog Stimulus controller
     class Dialog < Base
       def initialize(**attrs)
         @attrs = attrs
@@ -17,7 +16,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "dialog")
+        @attrs.merge(
+          data_slot: "dialog",
+          data_controller: "shadcn--dialog",
+          data_shadcn__dialog_open_value: false
+        )
       end
     end
 
@@ -33,7 +36,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "dialog-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "dialog-trigger",
+          data_shadcn__dialog_target: "trigger",
+          data_action: "click->shadcn--dialog#show",
+          type: "button"
+        )
       end
     end
 
@@ -55,7 +63,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "dialog-overlay", class: classes)
+        @attrs.merge(
+          data_slot: "dialog-overlay",
+          data_shadcn__dialog_target: "overlay",
+          data_action: "click->shadcn--dialog#clickOverlay",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -66,7 +80,6 @@ module Shadcn
       end
 
       def view_template(&block)
-        # Overlay
         render DialogOverlay.new
 
         div(**build_attrs) do
@@ -75,10 +88,11 @@ module Shadcn
           if @show_close_button
             button(
               data_slot: "dialog-close",
+              data_shadcn__dialog_target: "close",
+              data_action: "click->shadcn--dialog#hide",
               type: "button",
               class: "absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
             ) do
-              # X icon
               svg(
                 xmlns: "http://www.w3.org/2000/svg",
                 width: "16", height: "16",
@@ -110,7 +124,13 @@ module Shadcn
           "sm:max-w-lg",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "dialog-content", role: "dialog", class: classes)
+        @attrs.merge(
+          data_slot: "dialog-content",
+          data_shadcn__dialog_target: "content",
+          role: "dialog",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -143,10 +163,7 @@ module Shadcn
       private
 
       def build_attrs
-        classes = cn(
-          "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-          @attrs.delete(:class)
-        )
+        classes = cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", @attrs.delete(:class))
         @attrs.merge(data_slot: "dialog-footer", class: classes)
       end
     end
@@ -164,7 +181,7 @@ module Shadcn
 
       def build_attrs
         classes = cn("text-lg font-semibold leading-none tracking-tight", @attrs.delete(:class))
-        @attrs.merge(data_slot: "dialog-title", class: classes)
+        @attrs.merge(data_slot: "dialog-title", data_shadcn__dialog_target: "title", class: classes)
       end
     end
 
@@ -181,7 +198,7 @@ module Shadcn
 
       def build_attrs
         classes = cn("text-sm text-muted-foreground", @attrs.delete(:class))
-        @attrs.merge(data_slot: "dialog-description", class: classes)
+        @attrs.merge(data_slot: "dialog-description", data_shadcn__dialog_target: "description", class: classes)
       end
     end
 
@@ -197,7 +214,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "dialog-close", type: "button")
+        @attrs.merge(
+          data_slot: "dialog-close",
+          data_action: "click->shadcn--dialog#hide",
+          type: "button"
+        )
       end
     end
   end

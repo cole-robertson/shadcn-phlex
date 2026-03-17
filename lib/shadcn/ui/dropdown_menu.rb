@@ -16,7 +16,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "dropdown-menu")
+        @attrs.merge(
+          data_slot: "dropdown-menu",
+          data_controller: "shadcn--dropdown-menu"
+        )
       end
     end
 
@@ -32,7 +35,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "dropdown-menu-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "dropdown-menu-trigger",
+          data_shadcn__dropdown_menu_target: "trigger",
+          data_action: "click->shadcn--dropdown-menu#toggle",
+          type: "button"
+        )
       end
     end
 
@@ -57,7 +65,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "dropdown-menu-content", role: "menu", class: classes)
+        @attrs.merge(
+          data_slot: "dropdown-menu-content",
+          data_shadcn__dropdown_menu_target: "content",
+          role: "menu",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -104,8 +118,11 @@ module Shadcn
         )
         result = @attrs.merge(
           data_slot: "dropdown-menu-item",
+          data_shadcn__dropdown_menu_target: "item",
+          data_action: "click->shadcn--dropdown-menu#selectItem",
           data_variant: @variant,
           role: "menuitem",
+          tabindex: "-1",
           class: classes
         )
         result[:data_inset] = true if @inset
@@ -155,8 +172,11 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "dropdown-menu-checkbox-item",
+          data_shadcn__dropdown_menu_target: "item",
+          data_action: "click->shadcn--dropdown-menu#selectItem",
           role: "menuitemcheckbox",
           aria_checked: @checked,
+          tabindex: "-1",
           class: classes
         )
       end
@@ -216,8 +236,11 @@ module Shadcn
         )
         @attrs.merge(
           data_slot: "dropdown-menu-radio-item",
+          data_shadcn__dropdown_menu_target: "item",
+          data_action: "click->shadcn--dropdown-menu#selectItem",
           role: "menuitemradio",
           aria_checked: @checked,
+          tabindex: "-1",
           class: classes
         )
       end
@@ -317,7 +340,11 @@ module Shadcn
           "[&_svg:not([class*='text-'])]:text-muted-foreground",
           @attrs.delete(:class)
         )
-        result = @attrs.merge(data_slot: "dropdown-menu-sub-trigger", class: classes)
+        result = @attrs.merge(
+          data_slot: "dropdown-menu-sub-trigger",
+          data_shadcn__dropdown_menu_target: "subTrigger",
+          class: classes
+        )
         result[:data_inset] = true if @inset
         result
       end
@@ -343,7 +370,12 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "dropdown-menu-sub-content", class: classes)
+        @attrs.merge(
+          data_slot: "dropdown-menu-sub-content",
+          data_shadcn__dropdown_menu_target: "subContent",
+          hidden: true,
+          class: classes
+        )
       end
     end
   end

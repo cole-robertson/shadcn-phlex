@@ -16,7 +16,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "sheet")
+        @attrs.merge(
+          data_slot: "sheet",
+          data_controller: "shadcn--sheet",
+          data_shadcn__sheet_open_value: false
+        )
       end
     end
 
@@ -32,7 +36,12 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "sheet-trigger", type: "button")
+        @attrs.merge(
+          data_slot: "sheet-trigger",
+          data_shadcn__sheet_target: "trigger",
+          data_action: "click->shadcn--sheet#show",
+          type: "button"
+        )
       end
     end
 
@@ -54,7 +63,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "sheet-overlay", class: classes)
+        @attrs.merge(
+          data_slot: "sheet-overlay",
+          data_shadcn__sheet_target: "overlay",
+          data_action: "click->shadcn--sheet#clickOverlay",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -81,6 +96,7 @@ module Shadcn
           if @show_close_button
             button(
               data_slot: "sheet-close",
+              data_action: "click->shadcn--sheet#hide",
               type: "button",
               class: "absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
             ) do
@@ -113,7 +129,13 @@ module Shadcn
           SIDE_CLASSES[@side],
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "sheet-content", data_side: @side, class: classes)
+        @attrs.merge(
+          data_slot: "sheet-content",
+          data_shadcn__sheet_target: "content",
+          data_side: @side,
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -197,7 +219,11 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "sheet-close", type: "button")
+        @attrs.merge(
+          data_slot: "sheet-close",
+          data_action: "click->shadcn--sheet#hide",
+          type: "button"
+        )
       end
     end
   end

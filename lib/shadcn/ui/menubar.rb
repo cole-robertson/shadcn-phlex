@@ -19,7 +19,12 @@ module Shadcn
           "flex h-9 items-center gap-1 rounded-md border bg-background p-1 shadow-xs",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "menubar", role: "menubar", class: classes)
+        @attrs.merge(
+          data_slot: "menubar",
+          data_controller: "shadcn--menubar",
+          role: "menubar",
+          class: classes
+        )
       end
     end
 
@@ -57,7 +62,13 @@ module Shadcn
           "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "menubar-trigger", type: "button", class: classes)
+        @attrs.merge(
+          data_slot: "menubar-trigger",
+          data_shadcn__menubar_target: "trigger",
+          data_action: "click->shadcn--menubar#toggleMenu mouseenter->shadcn--menubar#enterTrigger",
+          type: "button",
+          class: classes
+        )
       end
     end
 
@@ -81,7 +92,13 @@ module Shadcn
           "data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "menubar-content", role: "menu", class: classes)
+        @attrs.merge(
+          data_slot: "menubar-content",
+          data_shadcn__menubar_target: "content",
+          role: "menu",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -109,7 +126,15 @@ module Shadcn
           "[&_svg:not([class*='text-'])]:text-muted-foreground",
           @attrs.delete(:class)
         )
-        result = @attrs.merge(data_slot: "menubar-item", data_variant: @variant, role: "menuitem", class: classes)
+        result = @attrs.merge(
+          data_slot: "menubar-item",
+          data_shadcn__menubar_target: "item",
+          data_action: "click->shadcn--menubar#selectItem",
+          data_variant: @variant,
+          role: "menuitem",
+          tabindex: "-1",
+          class: classes
+        )
         result[:data_inset] = true if @inset
         result
       end

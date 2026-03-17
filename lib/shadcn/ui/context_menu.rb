@@ -15,7 +15,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "context-menu")
+        @attrs.merge(
+          data_slot: "context-menu",
+          data_controller: "shadcn--context-menu"
+        )
       end
     end
 
@@ -31,7 +34,10 @@ module Shadcn
       private
 
       def build_attrs
-        @attrs.merge(data_slot: "context-menu-trigger")
+        @attrs.merge(
+          data_slot: "context-menu-trigger",
+          data_shadcn__context_menu_target: "trigger"
+        )
       end
     end
 
@@ -56,7 +62,13 @@ module Shadcn
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           @attrs.delete(:class)
         )
-        @attrs.merge(data_slot: "context-menu-content", role: "menu", class: classes)
+        @attrs.merge(
+          data_slot: "context-menu-content",
+          data_shadcn__context_menu_target: "content",
+          role: "menu",
+          hidden: true,
+          class: classes
+        )
       end
     end
 
@@ -87,8 +99,11 @@ module Shadcn
         )
         result = @attrs.merge(
           data_slot: "context-menu-item",
+          data_shadcn__context_menu_target: "item",
+          data_action: "click->shadcn--context-menu#selectItem",
           data_variant: @variant,
           role: "menuitem",
+          tabindex: "-1",
           class: classes
         )
         result[:data_inset] = true if @inset
