@@ -196,27 +196,13 @@ rails g shadcn_phlex:component all
 
 ## AI / LLM Support
 
-The install generator automatically sets up everything LLMs need:
-
-```bash
-rails g shadcn_phlex:install
-```
-
-This installs:
-- **CLAUDE.md** — project context loaded automatically by Claude Code
-- **.cursorrules** — project context loaded automatically by Cursor
-- **.claude/skills/shadcn-phlex/** — full agent skill with rules, component catalog, and composition patterns
-- **.cursor/skills/shadcn-phlex/** — same skill for Cursor
-
-After installation, any LLM entering the project immediately knows how to use every component, the correct composition patterns, form integration, theming, and what not to do. No extra setup needed.
-
-### Manual skill installation
-
-If you prefer to install the skill separately (e.g., globally):
+Install the agent skill so LLMs know how to use the library:
 
 ```bash
 npx skills add shadcn-phlex/shadcn-phlex
 ```
+
+This uses the standard [agent skills](https://agentskills.io) ecosystem — one command installs into `.claude/skills/`, `.cursor/skills/`, etc. for 40+ coding agents. After installation, any LLM entering the project knows every component, composition pattern, and best practice.
 
 ### What the skill teaches LLMs
 

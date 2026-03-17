@@ -27,7 +27,6 @@ module ShadcnPhlex
     end
 
     def copy_tailwind_config
-      # Copy the stable Tailwind config (custom variants, @theme inline, keyframes)
       copy_file gem_css("shadcn-tailwind.css"), "app/assets/stylesheets/shadcn-tailwind.css"
     end
 
@@ -45,8 +44,6 @@ module ShadcnPhlex
         radius: radius
       )
 
-      # Write just the theme variables — user can swap this with
-      # any theme from ui.shadcn.com/themes (same :root / .dark format)
       create_file "app/assets/stylesheets/shadcn-theme.css", <<~CSS
         /*
          * shadcn theme: #{base_color}#{accent_color ? " + #{accent_color}" : ""}
@@ -82,31 +79,6 @@ module ShadcnPhlex
       MSG
     end
 
-    def install_agent_skill
-      skill_source = gem_root.join("skills", "shadcn-phlex")
-      return unless File.directory?(skill_source)
-
-      # Install for Claude Code
-      install_skill_for(".claude/skills", skill_source)
-      # Install for Cursor
-      install_skill_for(".cursor/skills", skill_source)
-      # Install for generic agents
-      install_skill_for(".agents/skills", skill_source)
-    end
-
-    def copy_llm_context
-      claude_md = gem_root.join("templates", "CLAUDE.md")
-      cursorrules = gem_root.join("templates", ".cursorrules")
-
-      if File.exist?(claude_md) && !File.exist?("CLAUDE.md")
-        copy_file claude_md.to_s, "CLAUDE.md"
-      end
-
-      if File.exist?(cursorrules) && !File.exist?(".cursorrules")
-        copy_file cursorrules.to_s, ".cursorrules"
-      end
-    end
-
     def print_setup_complete
       say_status :info, "Setup complete!", :green
       say <<~MSG
@@ -116,11 +88,8 @@ module ShadcnPhlex
           2. Pick a theme and copy the CSS
           3. Paste into app/assets/stylesheets/shadcn-theme.css
 
-        LLM support installed:
-          - CLAUDE.md (project context for Claude Code)
-          - .cursorrules (project context for Cursor)
-          - .claude/skills/shadcn-phlex/ (agent skill)
-          - .cursor/skills/shadcn-phlex/ (agent skill)
+        For AI/LLM support, install the agent skill:
+          npx skills add shadcn-phlex/shadcn-phlex
 
       MSG
     end
@@ -133,22 +102,8 @@ module ShadcnPhlex
       false
     end
 
-    def gem_root
-      @gem_root ||= Pathname.new(File.expand_path("../../../..", __dir__))
-    end
-
     def gem_css(filename)
-      gem_root.join("css", filename).to_s
-    end
-
-    def install_skill_for(agent_dir, source)
-      target = File.join(agent_dir, "shadcn-phlex")
-      return if File.exist?(target)
-
-      # Copy the full skill directory
-      FileUtils.mkdir_p(agent_dir)
-      FileUtils.cp_r(source.to_s, target)
-      say_status :create, target, :green
+      File.expand_path("../../../../css/#{filename}", __dir__)
     end
   end
 end
