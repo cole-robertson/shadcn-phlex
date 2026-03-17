@@ -12,43 +12,33 @@ A complete port of [shadcn/ui](https://ui.shadcn.com) to [Phlex](https://www.phl
 - **Compound field helpers** — `TextField`, `TextareaField` for one-liner form fields
 - **Dark mode** — drop-in toggle with localStorage persistence
 - **Turbo compatible** — all controllers handle page transitions correctly
-- **Rails generators** — install and per-component generators
+- **Rails generators** — fully automated setup
 - **AI skills** — agent skill for Claude Code, Cursor, and 40+ coding agents
 
 ## Quick Start
 
-Add to your Gemfile:
+Two commands to get started:
 
 ```ruby
+# Gemfile
 gem "shadcn-phlex"
 ```
-
-Run the install generator:
 
 ```bash
 rails g shadcn_phlex:install --base-color=zinc --accent-color=violet
 ```
 
-Register Stimulus controllers in your JS entrypoint:
+The generator sets up everything automatically:
 
-```javascript
-import { registerShadcnControllers } from "shadcn/controllers"
-registerShadcnControllers(application)
-```
+- `app/views/application_view.rb` — base view with `Shadcn::Kit` included
+- `app/assets/stylesheets/shadcn.css` — Tailwind entrypoint with theme
+- `app/assets/stylesheets/shadcn-tailwind.css` — custom variants and keyframes
+- `app/assets/stylesheets/shadcn-theme.css` — theme variables (swappable)
+- `app/javascript/controllers/shadcn/` — all 25 Stimulus controllers
+- `config/application.rb` — autoload path for Phlex views
+- `controllers/index.js` — Stimulus registration injected
 
-## Usage
-
-### Option 1: Kit helpers (recommended)
-
-Include `Shadcn::Kit` in your base Phlex view:
-
-```ruby
-class ApplicationView < Phlex::HTML
-  include Shadcn::Kit
-end
-```
-
-Then use the short `ui_*` helpers:
+Start building immediately:
 
 ```ruby
 class SettingsView < ApplicationView
@@ -62,8 +52,7 @@ class SettingsView < ApplicationView
         ui_text_field(
           label: "Display Name",
           name: "user[name]",
-          value: @user.name,
-          error: @user.errors[:name]&.first
+          placeholder: "Enter your name"
         )
         ui_text_field(
           label: "Email",
@@ -81,7 +70,18 @@ class SettingsView < ApplicationView
 end
 ```
 
-### Option 2: Direct render
+## Usage
+
+All components are available as `ui_*` helpers when `Shadcn::Kit` is included (the generator does this for you):
+
+```ruby
+ui_button(variant: :destructive) { "Delete" }
+ui_badge(variant: :outline) { "Beta" }
+ui_separator
+ui_skeleton(class: "h-4 w-[200px]")
+```
+
+Or use direct render calls:
 
 ```ruby
 render Shadcn::UI::Button.new(variant: :destructive) { "Delete" }
@@ -138,13 +138,6 @@ Themes use the **exact same CSS variable format** as shadcn/ui. To change themes
 2. Pick a theme and copy the CSS
 3. Paste into `app/assets/stylesheets/shadcn-theme.css`
 
-Or use the built-in themes:
-
-```css
-/* In your CSS entrypoint */
-@import "./shadcn-theme.css"; /* swap with any theme */
-```
-
 Or generate from Ruby:
 
 ```ruby
@@ -163,35 +156,18 @@ css = Shadcn::Themes.generate_css(
 
 ## Dark Mode
 
-Drop in the theme toggle:
-
 ```ruby
 ui_theme_toggle # renders sun/moon button, persists to localStorage
-```
-
-Or control programmatically via the `shadcn--dark-mode` Stimulus controller:
-
-```html
-<div data-controller="shadcn--dark-mode">
-  <button data-action="shadcn--dark-mode#toggle">Toggle</button>
-</div>
 ```
 
 ## Generators
 
 ```bash
-# Install everything (CSS, config, instructions)
+# Full automated setup
 rails g shadcn_phlex:install
 
 # With theme options
 rails g shadcn_phlex:install --base-color=zinc --accent-color=blue --radius=0.5rem
-
-# Copy individual components into your app
-rails g shadcn_phlex:component button
-rails g shadcn_phlex:component dialog
-
-# Copy all components
-rails g shadcn_phlex:component all
 ```
 
 ## AI / LLM Support
@@ -204,29 +180,7 @@ npx skills add shadcn-phlex/shadcn-phlex
 
 This uses the standard [agent skills](https://agentskills.io) ecosystem — one command installs into `.claude/skills/`, `.cursor/skills/`, etc. for 40+ coding agents. After installation, any LLM entering the project knows every component, composition pattern, and best practice.
 
-### What the skill teaches LLMs
-
-The skill follows the same structure as [shadcn's own agent skill](https://github.com/shadcn-ui/ui/tree/main/skills/shadcn):
-
-- **Component selection** — which component to use for each UI need
-- **Composition rules** — correct nesting (items in parents, titles required, etc.)
-- **Form rules** — `name:` for submission, TextField for labeled inputs, ToggleGroup for option sets
-- **Styling rules** — semantic colors, no space-y, size-* shorthand, no manual dark:
-- **Stimulus rules** — never manually add data-controller (components are pre-wired)
-- **Incorrect/Correct code pairs** — concrete Ruby/Phlex examples for every rule
-
-## CSS Structure
-
-The CSS follows the same architecture as standard shadcn:
-
-```css
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "./shadcn-tailwind.css";  /* variants, @theme inline, keyframes */
-@import "./shadcn-theme.css";     /* :root / .dark variables (swappable) */
-```
-
-`shadcn-tailwind.css` matches `shadcn/tailwind.css` exactly — same custom variants (`data-open`, `data-closed`, etc.), same `@theme inline` mapping, same keyframes.
+The skill follows the same structure as [shadcn's own agent skill](https://github.com/shadcn-ui/ui/tree/main/skills/shadcn) — component selection tables, composition rules, form rules, styling rules, and Incorrect/Correct Ruby/Phlex code pairs for every rule.
 
 ## Testing
 

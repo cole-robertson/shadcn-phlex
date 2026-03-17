@@ -60,7 +60,8 @@ module ShadcnPhlex
     end
 
     def copy_tailwind_config
-      copy_file gem_css("shadcn-tailwind.css"), "app/assets/stylesheets/shadcn-tailwind.css"
+      source = gem_css("shadcn-tailwind.css")
+      create_file "app/assets/stylesheets/shadcn-tailwind.css", File.read(source)
     end
 
     def create_theme
@@ -103,16 +104,14 @@ module ShadcnPhlex
     end
 
     def copy_stimulus_controllers
-      # Copy JS controllers into the app so bundlers can find them
-      gem_js = File.expand_path("../../../../js/controllers", __dir__)
       target = "app/javascript/controllers/shadcn"
 
-      if File.directory?(gem_js) && !File.directory?(target)
-        FileUtils.mkdir_p(target)
-        Dir[File.join(gem_js, "*.js")].each do |file|
-          copy_file file, File.join(target, File.basename(file))
+      if File.directory?(gem_js_dir) && !File.directory?(target)
+        js_files = Dir[File.join(gem_js_dir, "*.js")]
+        js_files.each do |file|
+          create_file File.join(target, File.basename(file)), File.read(file)
         end
-        say_status :create, "#{target}/ (#{Dir[File.join(gem_js, '*.js')].count} controllers)", :green
+        say_status :copied, "#{js_files.count} Stimulus controllers to #{target}/", :green
       end
     end
 
@@ -169,8 +168,23 @@ module ShadcnPhlex
       false
     end
 
+    def gem_root
+      @gem_root ||= begin
+        spec = Gem.loaded_specs["shadcn-phlex"]
+        if spec
+          spec.full_gem_path
+        else
+          File.expand_path("../../../..", __dir__)
+        end
+      end
+    end
+
     def gem_css(filename)
-      File.expand_path("../../../../css/#{filename}", __dir__)
+      File.join(gem_root, "css", filename)
+    end
+
+    def gem_js_dir
+      File.join(gem_root, "js", "controllers")
     end
   end
 end
