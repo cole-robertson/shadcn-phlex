@@ -30,7 +30,7 @@ module Pages
     def view_template
       # Hero
       section(class: "relative") do
-        div(class: "mx-auto max-w-[980px] py-20 md:py-28 flex flex-col items-center gap-4 text-center") do
+        div(class: "mx-auto max-w-3xl py-20 md:py-28 px-6 flex flex-col items-center gap-4 text-center") do
           a(href: "https://github.com/cole-robertson/shadcn-phlex", class: "inline-flex items-center rounded-full border px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent") do
             plain "Now on RubyGems "
             span(class: "ml-1") { "→" }
@@ -59,8 +59,8 @@ module Pages
 
       # Component showcase
       section(class: "border-t") do
-        div(class: "mx-auto max-w-6xl px-6 py-16") do
-          div(class: "grid gap-6 lg:grid-cols-2 xl:grid-cols-3") do
+        div(class: "mx-auto max-w-4xl px-6 py-16") do
+          div(class: "grid gap-6 md:grid-cols-2") do
             # Card with form
             showcase_card do
               ui_card do
@@ -133,7 +133,7 @@ module Pages
             end
 
             # Data table
-            showcase_card(class: "lg:col-span-2") do
+            showcase_card(class: "md:col-span-2") do
               ui_table do
                 ui_table_header do
                   ui_table_row do
@@ -198,7 +198,7 @@ module Pages
 
       # Code + Preview
       section(class: "border-t bg-muted/30") do
-        div(class: "mx-auto max-w-5xl px-6 py-16") do
+        div(class: "mx-auto max-w-4xl px-6 py-16") do
           h2(class: "text-2xl font-bold tracking-tight text-center mb-2") { "Write UI in pure Ruby" }
           p(class: "text-center text-muted-foreground mb-10") { "No ERB. No JSX. Just Ruby classes with ui_* helpers." }
           div(class: "grid gap-8 lg:grid-cols-2 items-start") do
