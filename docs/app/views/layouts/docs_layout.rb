@@ -28,10 +28,12 @@ module Layouts
           meta(charset: "utf-8")
           meta(name: "viewport", content: "width=device-width,initial-scale=1")
           title { [@title, "shadcn-phlex"].compact.join(" — ") }
-          link(rel: "stylesheet", href: "/assets/application.css")
-          script(src: "/assets/application.js", defer: true)
+          stylesheet_tag("application")
+          script_tag("application")
         end
         body(class: "min-h-screen bg-background text-foreground antialiased", data_controller: "shadcn--dark-mode") do
+          # Sonner toast container — renders toasts in bottom-right
+          div(data_controller: "sonner", data_sonner_theme_value: "system", data_sonner_rich_colors_value: "true")
           render_header
           div(class: "flex") do
             render_sidebar

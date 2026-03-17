@@ -14,8 +14,8 @@ module Pages
           meta(charset: "utf-8")
           meta(name: "viewport", content: "width=device-width,initial-scale=1")
           title { "shadcn-phlex — shadcn/ui for Rails" }
-          link(rel: "stylesheet", href: "/assets/application.css")
-          script(src: "/assets/application.js", defer: true)
+          stylesheet_tag("application")
+          script_tag("application")
         end
         body(class: "min-h-screen bg-background text-foreground antialiased", data_controller: "shadcn--dark-mode") do
           render_header
