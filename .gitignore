@@ -1,1 +1,18 @@
 .playwright-mcp/
+
+# OS
+.DS_Store
+
+# Gems
+*.gem
+
+# Docs app secrets (should never be public)
+docs/config/master.key
+docs/config/credentials.yml.enc
+
+# Docs app runtime
+docs/tmp/
+docs/log/
+docs/storage/
+docs/node_modules/
+docs/app/assets/builds/
