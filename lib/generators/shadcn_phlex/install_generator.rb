@@ -82,8 +82,21 @@ module ShadcnPhlex
       MSG
     end
 
+    def copy_llm_context
+      claude_md = File.expand_path("../../../../templates/CLAUDE.md", __dir__)
+      cursorrules = File.expand_path("../../../../templates/.cursorrules", __dir__)
+
+      if File.exist?(claude_md) && !File.exist?("CLAUDE.md")
+        copy_file claude_md, "CLAUDE.md"
+      end
+
+      if File.exist?(cursorrules) && !File.exist?(".cursorrules")
+        copy_file cursorrules, ".cursorrules"
+      end
+    end
+
     def print_theme_instructions
-      say_status :info, "Theme setup complete!", :green
+      say_status :info, "Setup complete!", :green
       say <<~MSG
 
         To change your theme:
@@ -91,7 +104,9 @@ module ShadcnPhlex
           2. Pick a theme and copy the CSS
           3. Paste into app/assets/stylesheets/shadcn-theme.css
 
-        The format is identical — just :root and .dark blocks with CSS variables.
+        LLM context files added:
+          - CLAUDE.md (for Claude Code)
+          - .cursorrules (for Cursor)
 
       MSG
     end
