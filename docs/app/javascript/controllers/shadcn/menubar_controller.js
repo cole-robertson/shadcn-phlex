@@ -59,6 +59,7 @@ export default class extends Controller {
   }
 
   _syncState() {
+    if (!this._hideTimeouts) return
     this.triggerTargets.forEach((trigger) => {
       const isActive = trigger.dataset.value === this.activeMenuValue
       trigger.dataset.state = isActive ? "open" : "closed"

@@ -8,10 +8,10 @@ module Pages
       end
 
       def view_template
-        preview("Default") do
+        preview("Bottom (default)") do
           ui_drawer do
-            ui_drawer_trigger do
-              ui_button(variant: :outline) { "Open Drawer" }
+            ui_drawer_trigger(class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground") do
+              plain "Open Drawer"
             end
             ui_drawer_content do
               div(class: "mx-auto w-full max-w-sm") do
@@ -20,7 +20,7 @@ module Pages
                   ui_drawer_description { "Set your daily activity goal." }
                 end
                 div(class: "p-4") do
-                  div(class: "flex items-center justify-center space-x-4") do
+                  div(class: "flex items-center justify-center gap-4") do
                     ui_button(variant: :outline, size: :icon) { "-" }
                     span(class: "text-4xl font-bold tabular-nums") { "350" }
                     ui_button(variant: :outline, size: :icon) { "+" }
@@ -29,8 +29,8 @@ module Pages
                 end
                 ui_drawer_footer do
                   ui_button { "Submit" }
-                  ui_drawer_close do
-                    ui_button(variant: :outline) { "Cancel" }
+                  ui_drawer_close(class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground") do
+                    plain "Cancel"
                   end
                 end
               end
@@ -40,7 +40,7 @@ module Pages
 
         code <<~RUBY
           ui_drawer do
-            ui_drawer_trigger { ui_button { "Open" } }
+            ui_drawer_trigger { "Open" }
             ui_drawer_content do
               ui_drawer_header do
                 ui_drawer_title { "Title" }
@@ -49,7 +49,7 @@ module Pages
               # content here
               ui_drawer_footer do
                 ui_button { "Submit" }
-                ui_drawer_close { ui_button(variant: :outline) { "Cancel" } }
+                ui_drawer_close { "Cancel" }
               end
             end
           end

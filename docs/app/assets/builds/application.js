@@ -9000,6 +9000,7 @@
       this._syncValueState();
     }
     _syncOpenState() {
+      if (!this._hideTimeouts) return;
       this.contentTargets.forEach((el) => {
         el.dataset.state = this.openValue ? "open" : "closed";
         if (this.openValue) {
@@ -9126,6 +9127,7 @@
       this._syncState();
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       if (this.openValue) {
         this._open();
       } else {
@@ -9256,6 +9258,7 @@
       this.openValue = true;
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.contentTargets.forEach((el) => {
         el.dataset.state = state;
@@ -9371,6 +9374,7 @@
       }
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       if (this.openValue) {
         this._open();
       } else {
@@ -9545,6 +9549,7 @@
       if (this.closeOnOverlayValue && event.target === event.currentTarget) this.hide();
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.element.dataset.state = state;
       this.overlayTargets.forEach((el) => {
@@ -9687,6 +9692,7 @@
       }
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.element.dataset.state = state;
       this.triggerTargets.forEach((el) => {
@@ -9871,6 +9877,7 @@
       this._syncState();
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.contentTargets.forEach((el) => {
         el.dataset.state = state;
@@ -9953,6 +9960,7 @@
       }
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       this.triggerTargets.forEach((trigger) => {
         const isActive = trigger.dataset.value === this.activeMenuValue;
         trigger.dataset.state = isActive ? "open" : "closed";
@@ -10213,6 +10221,7 @@
       this._syncState();
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.element.dataset.state = state;
       this.triggerTargets.forEach((el) => {
@@ -10537,6 +10546,7 @@
       this._syncValueState();
     }
     _syncOpenState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.triggerTargets.forEach((el) => {
         el.dataset.state = state;
@@ -10694,6 +10704,7 @@
       }
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.element.dataset.state = state;
       this.overlayTargets.forEach((el) => {
@@ -11336,6 +11347,7 @@
       this._syncState();
     }
     _syncState() {
+      if (!this._hideTimeouts) return;
       const state = this.openValue ? "open" : "closed";
       this.element.dataset.state = state;
       this.contentTargets.forEach((el) => {

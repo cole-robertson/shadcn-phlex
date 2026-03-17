@@ -106,6 +106,7 @@ export default class extends Controller {
   }
 
   _syncOpenState() {
+    if (!this._hideTimeouts) return
     this.contentTargets.forEach((el) => {
       el.dataset.state = this.openValue ? "open" : "closed"
       if (this.openValue) {

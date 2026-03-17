@@ -48,6 +48,7 @@ export default class extends Controller {
   }
 
   _syncState() {
+    if (!this._hideTimeouts) return
     if (this.openValue) {
       this._open()
     } else {

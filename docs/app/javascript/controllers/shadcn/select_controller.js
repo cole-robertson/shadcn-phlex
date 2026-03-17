@@ -63,6 +63,7 @@ export default class extends Controller {
   }
 
   _syncOpenState() {
+    if (!this._hideTimeouts) return
     const state = this.openValue ? "open" : "closed"
 
     this.triggerTargets.forEach((el) => {
