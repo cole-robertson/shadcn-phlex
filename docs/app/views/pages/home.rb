@@ -203,69 +203,82 @@ module Pages
           p(class: "text-center text-muted-foreground mb-10") { "No ERB. No JSX. Just Ruby classes with ui_* helpers." }
           div(class: "grid gap-8 md:grid-cols-2 items-start") do
             # Code
-            div(class: "rounded-lg border bg-card overflow-hidden") do
-              div(class: "border-b px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50") { "app/views/settings_view.rb" }
-              pre(class: "p-4 text-[13px] font-mono overflow-x-auto leading-relaxed") do
-                code do
-                  plain <<~RUBY
-                    class SettingsView < ApplicationView
-                      def view_template
-                        ui_dialog do
-                          ui_dialog_trigger do
-                            ui_button(variant: :outline) { "Edit Profile" }
-                          end
-                          ui_dialog_content do
-                            ui_dialog_header do
-                              ui_dialog_title { "Edit Profile" }
-                              ui_dialog_description { "Update your info." }
-                            end
-
-                            ui_text_field(
-                              label: "Name",
-                              name: "user[name]",
-                              value: @user.name
-                            )
-                            ui_text_field(
-                              label: "Email",
-                              name: "user[email]",
-                              type: "email",
-                              error: @user.errors[:email]&.first
-                            )
-                            ui_switch(name: "user[newsletter]") do
-                              "Subscribe to newsletter"
-                            end
-
-                            ui_dialog_footer do
-                              ui_button { "Save changes" }
-                            end
-                          end
+            render ::Components::RubyCode.new(
+              filename: "app/views/settings_view.rb",
+              code: <<~RUBY
+                class SettingsView < ApplicationView
+                  def view_template
+                    ui_card do
+                      ui_card_header do
+                        ui_card_title { "Profile" }
+                        ui_card_description do
+                          "Update your personal information."
                         end
                       end
+                      ui_card_content do
+                        ui_text_field(
+                          label: "Name",
+                          name: "user[name]",
+                          value: @user.name
+                        )
+                        ui_text_field(
+                          label: "Email",
+                          name: "user[email]",
+                          type: "email",
+                          error: @user.errors[:email]&.first
+                        )
+                        ui_select(name: "user[role]") do
+                          ui_select_trigger do
+                            ui_select_value(placeholder: "Role")
+                          end
+                          ui_select_content do
+                            ui_select_item(value: "admin") { "Admin" }
+                            ui_select_item(value: "member") { "Member" }
+                          end
+                        end
+                        ui_switch(name: "user[newsletter]") do
+                          "Marketing emails"
+                        end
+                      end
+                      ui_card_footer do
+                        ui_button(variant: :outline) { "Cancel" }
+                        ui_button { "Save" }
+                      end
                     end
-                  RUBY
+                  end
                 end
-              end
-            end
+              RUBY
+            )
 
             # Live preview
-            div(class: "rounded-lg border bg-card p-6") do
-              div(class: "border-b -mx-6 -mt-6 mb-6 px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50") { "Preview" }
-              ui_dialog do
-                ui_dialog_trigger do
-                  ui_button(variant: :outline) { "Edit Profile" }
-                end
-                ui_dialog_content do
-                  ui_dialog_header do
-                    ui_dialog_title { "Edit Profile" }
-                    ui_dialog_description { "Update your info." }
+            div(class: "rounded-lg border bg-card overflow-hidden") do
+              div(class: "border-b px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50") { "Preview" }
+              div(class: "p-4") do
+                ui_card do
+                  ui_card_header do
+                    ui_card_title { "Profile" }
+                    ui_card_description { "Update your personal information." }
                   end
-                  div(class: "flex flex-col gap-4 py-4") do
-                    ui_text_field(label: "Name", name: "user[name]", value: "Cole Robertson")
-                    ui_text_field(label: "Email", name: "user[email]", type: "email", error: "has already been taken")
-                    ui_switch(name: "user[newsletter]", checked: true) { "Subscribe to newsletter" }
+                  ui_card_content do
+                    div(class: "flex flex-col gap-4") do
+                      ui_text_field(label: "Name", name: "user[name]", value: "Cole Robertson")
+                      ui_text_field(label: "Email", name: "user[email]", type: "email", error: "has already been taken")
+                      ui_select(name: "user[role]") do
+                        ui_select_trigger do
+                          ui_select_value(placeholder: "Role")
+                        end
+                        ui_select_content do
+                          ui_select_item(value: "admin") { "Admin" }
+                          ui_select_item(value: "member") { "Member" }
+                          ui_select_item(value: "viewer") { "Viewer" }
+                        end
+                      end
+                      ui_switch(name: "user[newsletter]", checked: true) { "Marketing emails" }
+                    end
                   end
-                  ui_dialog_footer do
-                    ui_button { "Save changes" }
+                  ui_card_footer(class: "flex justify-end gap-2") do
+                    ui_button(variant: :outline) { "Cancel" }
+                    ui_button { "Save" }
                   end
                 end
               end

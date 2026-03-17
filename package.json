@@ -9,6 +9,7 @@
     "./controllers/*": "./js/controllers/*"
   },
   "dependencies": {
-    "@hotwired/stimulus": "^3.2.0"
+    "@hotwired/stimulus": "^3.2.0",
+    "prismjs": "^1.30.0"
   }
 }

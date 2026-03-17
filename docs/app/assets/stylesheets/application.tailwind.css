@@ -194,3 +194,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Ruby syntax highlighting */
+.hl-kw { color: oklch(0.75 0.15 300); font-weight: 500; }
+.hl-str { color: oklch(0.72 0.12 165); }
+.hl-sym { color: oklch(0.72 0.12 165); }
+.hl-comment { color: oklch(0.55 0 0); font-style: italic; }
+.hl-ivar { color: oklch(0.78 0.14 55); }
+.hl-method { color: oklch(0.72 0.16 230); }
