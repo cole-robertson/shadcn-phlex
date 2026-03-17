@@ -84,11 +84,11 @@ module Layouts
                   span(class: "sr-only") { "Menu" }
                 end
               end
-              ui_sheet_content(side: :left) do
-                ui_sheet_header do
+              ui_sheet_content(side: :left, class: "flex flex-col overflow-hidden") do
+                ui_sheet_header(class: "shrink-0") do
                   ui_sheet_title { "shadcn-phlex" }
                 end
-                nav(class: "overflow-y-auto py-4 -mx-2") do
+                nav(class: "flex-1 overflow-y-auto py-4 -mx-2") do
                   render_nav_links
                 end
               end
