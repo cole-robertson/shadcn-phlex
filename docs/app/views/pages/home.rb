@@ -198,10 +198,10 @@ module Pages
 
       # Code + Preview
       section(class: "border-t bg-muted/30") do
-        div(class: "mx-auto max-w-4xl px-6 py-16") do
+        div(class: "mx-auto max-w-6xl px-6 py-16") do
           h2(class: "text-2xl font-bold tracking-tight text-center mb-2") { "Write UI in pure Ruby" }
           p(class: "text-center text-muted-foreground mb-10") { "No ERB. No JSX. Just Ruby classes with ui_* helpers." }
-          div(class: "grid gap-8 lg:grid-cols-2 items-start") do
+          div(class: "grid gap-8 md:grid-cols-2 items-start") do
             # Code
             div(class: "rounded-lg border bg-card overflow-hidden") do
               div(class: "border-b px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50") { "app/views/settings_view.rb" }
