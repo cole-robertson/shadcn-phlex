@@ -120,8 +120,8 @@ export default class extends Controller {
         el.getAnimations().forEach(a => a.cancel())
         el.hidden = false
         el.dataset.state = "open"
-        this._position(el)
         requestAnimationFrame(() => {
+          this._position(el)
           if (this.hasInputTarget) this.inputTarget.focus()
         })
       } else {
@@ -152,10 +152,12 @@ export default class extends Controller {
   }
 
   _position(content) {
-    const rect = this.element.getBoundingClientRect()
+    // Use the trigger for positioning, not the root (which expands when content is visible)
+    const trigger = this.element.querySelector('[data-slot="combobox-trigger"]') || this.element
+    const rect = trigger.getBoundingClientRect()
     content.style.position = "fixed"
     content.style.zIndex = "50"
-    content.style.width = `${rect.width}px`
+    content.style.width = `${Math.max(rect.width, 200)}px`
     content.style.top = `${rect.bottom + 4}px`
     content.style.left = `${rect.left}px`
   }
