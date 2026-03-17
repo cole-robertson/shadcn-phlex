@@ -28,7 +28,6 @@ module ShadcnPhlex
     end
 
     def configure_autoload
-      # Phlex views in app/views/ need to be autoloaded
       application_rb = "config/application.rb"
       return unless File.exist?(application_rb)
 
@@ -55,6 +54,35 @@ module ShadcnPhlex
 
         class ApplicationView < Phlex::HTML
           include Shadcn::Kit
+          include Phlex::Rails::Helpers::Routes
+          include Phlex::Rails::Helpers::StyleSheetLinkTag
+          include Phlex::Rails::Helpers::JavaScriptIncludeTag
+
+          # Dark mode blocking script — prevents flash of light mode
+          DARK_MODE_SCRIPT = '(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme:dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();'
+
+          def around_template(&block)
+            doctype
+            html(lang: "en") do
+              head do
+                meta(charset: "utf-8")
+                meta(name: "viewport", content: "width=device-width,initial-scale=1")
+                title { page_title }
+                script { raw(Phlex::HTML::SafeValue.new(DARK_MODE_SCRIPT)) }
+                stylesheet_link_tag("application")
+                javascript_include_tag("application", defer: "defer")
+              end
+              body(class: "min-h-screen bg-background text-foreground antialiased", data_controller: "shadcn--dark-mode") do
+                yield
+              end
+            end
+          end
+
+          private
+
+          def page_title
+            "My App"
+          end
         end
       RUBY
     end
@@ -122,7 +150,6 @@ module ShadcnPhlex
       content = File.read(index_path)
       return if content.include?("shadcn")
 
-      # Add import and registration
       append_to_file index_path, <<~JS
 
         // shadcn-phlex Stimulus controllers
@@ -137,12 +164,12 @@ module ShadcnPhlex
       say <<~MSG
 
         shadcn-phlex is ready. Here's what was set up:
-          - app/views/application_view.rb (base view with Shadcn::Kit)
+          - app/views/application_view.rb (base view with Kit, dark mode, asset tags)
           - app/assets/stylesheets/shadcn.css (Tailwind + theme)
           - app/javascript/controllers/shadcn/ (Stimulus controllers)
           - config/application.rb (autoload app/views)
 
-        Start using components in any Phlex view:
+        Start using components:
           class MyView < ApplicationView
             def view_template
               ui_button { "Hello" }
