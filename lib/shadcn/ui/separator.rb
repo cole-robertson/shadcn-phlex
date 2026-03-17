@@ -17,13 +17,10 @@ module Shadcn
       private
 
       def build_attrs
-        orientation_classes = if @orientation == :horizontal
-          "h-px w-full"
-        else
-          "h-full w-px"
-        end
-
-        classes = cn("shrink-0 bg-border", orientation_classes, @attrs.delete(:class))
+        classes = cn(
+          "shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+          @attrs.delete(:class)
+        )
 
         result = @attrs.merge(
           data_slot: "separator",

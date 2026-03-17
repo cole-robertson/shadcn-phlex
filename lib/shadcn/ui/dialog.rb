@@ -91,7 +91,7 @@ module Shadcn
               data_shadcn__dialog_target: "close",
               data_action: "click->shadcn--dialog#hide",
               type: "button",
-              class: "absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+              class: "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
             ) do
               svg(
                 xmlns: "http://www.w3.org/2000/svg",
@@ -118,7 +118,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%]",
-          "gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200",
+          "gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none",
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           "sm:max-w-lg",
@@ -180,7 +180,7 @@ module Shadcn
       private
 
       def build_attrs
-        classes = cn("text-lg font-semibold leading-none tracking-tight", @attrs.delete(:class))
+        classes = cn("text-lg leading-none font-semibold", @attrs.delete(:class))
         @attrs.merge(data_slot: "dialog-title", data_shadcn__dialog_target: "title", class: classes)
       end
     end
