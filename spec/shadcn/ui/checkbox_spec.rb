@@ -33,10 +33,11 @@ RSpec.describe Shadcn::UI::Checkbox do
     expect(doc.at_css("svg")).not_to be_nil
   end
 
-  it "does not render check icon when unchecked" do
+  it "hides check icon when unchecked" do
     doc = parse_component(described_class.new(checked: false))
     indicator = doc.at_css('[data-slot="checkbox-indicator"]')
-    expect(indicator).to be_nil
+    expect(indicator).not_to be_nil
+    expect(indicator["hidden"]).to eq("")
   end
 
   it "has role='checkbox'" do
