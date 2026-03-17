@@ -11,9 +11,12 @@ export default class extends Controller {
   connect() {
     this._onClickOutside = this._handleClickOutside.bind(this)
     this._onKeydown = this._handleKeydown.bind(this)
+    this._hideTimeouts = []
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     this._removeListeners()
   }
 
@@ -74,7 +77,7 @@ export default class extends Controller {
           firstItem?.focus()
         })
       } else {
-        setTimeout(() => { if (content.dataset.state === "closed") content.hidden = true }, 200)
+        this._hideTimeouts.push(setTimeout(() => { if (content.dataset.state === "closed") content.hidden = true }, 200))
       }
     })
   }

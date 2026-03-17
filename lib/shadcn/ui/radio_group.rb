@@ -4,12 +4,18 @@ module Shadcn
   module UI
     # Port of shadcn/ui RadioGroup
     class RadioGroup < Base
-      def initialize(**attrs)
+      def initialize(name: nil, **attrs)
+        @name = name
         @attrs = attrs
       end
 
       def view_template(&block)
-        div(**build_attrs, &block)
+        div(**build_attrs) do
+          if @name
+            input(type: "hidden", name: @name, value: "", data_shadcn__radio_group_target: "input")
+          end
+          yield if block_given?
+        end
       end
 
       private

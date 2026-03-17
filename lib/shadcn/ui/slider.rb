@@ -4,15 +4,19 @@ module Shadcn
   module UI
     # Port of shadcn/ui Slider
     class Slider < Base
-      def initialize(value: 0, min: 0, max: 100, **attrs)
+      def initialize(value: 0, min: 0, max: 100, name: nil, **attrs)
         @value = value
         @min = min
         @max = max
+        @name = name
         @attrs = attrs
       end
 
       def view_template
         span(**build_attrs) do
+          if @name
+            input(type: "hidden", name: @name, value: @value.to_s, data_shadcn__slider_target: "input")
+          end
           span(
             data_slot: "slider-track",
             data_shadcn__slider_target: "track",

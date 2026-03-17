@@ -1,0 +1,3 @@
+/* Include this in your Tailwind entrypoint to ensure component classes aren't purged */
+@source "../../lib/shadcn/ui/*.rb";
+@source "../../lib/shadcn/base.rb";

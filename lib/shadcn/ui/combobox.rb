@@ -6,12 +6,18 @@ module Shadcn
     # Searchable select with filtering
     # Wired to shadcn--combobox Stimulus controller
     class Combobox < Base
-      def initialize(**attrs)
+      def initialize(name: nil, **attrs)
+        @name = name
         @attrs = attrs
       end
 
       def view_template(&block)
-        div(**build_attrs, &block)
+        div(**build_attrs) do
+          if @name
+            input(type: "hidden", name: @name, value: "", data_shadcn__combobox_target: "hiddenInput")
+          end
+          yield if block_given?
+        end
       end
 
       private

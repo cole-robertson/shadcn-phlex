@@ -20,11 +20,14 @@ export default class extends Controller {
       group: el.closest('[data-slot="command-group"]'),
     }))
 
+    this._hideTimeouts = []
     document.addEventListener("keydown", this._onGlobalKeydown)
     this._syncState()
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     document.removeEventListener("keydown", this._onGlobalKeydown)
     document.removeEventListener("keydown", this._onKeydown)
   }
@@ -113,11 +116,11 @@ export default class extends Controller {
   _close() {
     this.dialogTargets.forEach((el) => {
       el.dataset.state = "closed"
-      setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200)
+      this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
     })
     this.overlayTargets.forEach((el) => {
       el.dataset.state = "closed"
-      setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200)
+      this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
     })
 
     document.body.style.overflow = ""

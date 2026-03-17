@@ -13,11 +13,14 @@ export default class extends Controller {
   connect() {
     this._toasts = new Map()
     this._counter = 0
+    this._hideTimeouts = []
   }
 
   disconnect() {
     this._toasts.forEach((timer) => clearTimeout(timer))
     this._toasts.clear()
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
   }
 
   // Public API: call from other controllers via this.dispatch or custom events
@@ -128,7 +131,7 @@ export default class extends Controller {
     toast.style.opacity = "0"
     toast.style.transform = "translateX(100%)"
 
-    setTimeout(() => toast.remove(), 200)
+    this._hideTimeouts.push(setTimeout(() => toast.remove(), 200))
   }
 
   _addSwipeToDismiss(toast) {

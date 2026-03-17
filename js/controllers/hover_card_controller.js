@@ -13,12 +13,15 @@ export default class extends Controller {
   connect() {
     this._showTimeout = null
     this._hideTimeout = null
+    this._hideTimeouts = []
     this._syncState()
   }
 
   disconnect() {
     clearTimeout(this._showTimeout)
     clearTimeout(this._hideTimeout)
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
   }
 
   triggerEnter() {
@@ -50,7 +53,7 @@ export default class extends Controller {
         el.hidden = false
         this._position(el)
       } else {
-        setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200)
+        this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
       }
     })
   }

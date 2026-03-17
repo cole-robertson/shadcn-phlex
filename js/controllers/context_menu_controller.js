@@ -12,6 +12,7 @@ export default class extends Controller {
     this._onClickOutside = this._handleClickOutside.bind(this)
     this._onKeydown = this._handleKeydown.bind(this)
     this._onContextMenu = this._handleContextMenu.bind(this)
+    this._hideTimeouts = []
 
     this.triggerTargets.forEach((el) => {
       el.addEventListener("contextmenu", this._onContextMenu)
@@ -21,6 +22,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     this._removeListeners()
     this.triggerTargets.forEach((el) => {
       el.removeEventListener("contextmenu", this._onContextMenu)
@@ -58,7 +61,7 @@ export default class extends Controller {
           firstItem?.focus()
         })
       } else {
-        setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200)
+        this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
       }
     })
 

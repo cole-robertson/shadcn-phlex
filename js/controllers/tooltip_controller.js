@@ -15,12 +15,15 @@ export default class extends Controller {
   connect() {
     this._showTimeout = null
     this._hideTimeout = null
+    this._hideTimeouts = []
     this._syncState()
   }
 
   disconnect() {
     clearTimeout(this._showTimeout)
     clearTimeout(this._hideTimeout)
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
   }
 
   mouseEnter() {
@@ -132,7 +135,7 @@ export default class extends Controller {
   }
 
   _hideAfterAnimation(el) {
-    setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 150)
+    this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 150))
   }
 
   _ensureId(el, prefix) {

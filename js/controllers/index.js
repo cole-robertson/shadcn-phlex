@@ -7,6 +7,7 @@
 //   registerShadcnControllers(application)
 
 import AccordionController from "./accordion_controller"
+import DarkModeController from "./dark_mode_controller"
 import CheckboxController from "./checkbox_controller"
 import CollapsibleController from "./collapsible_controller"
 import ComboboxController from "./combobox_controller"
@@ -33,6 +34,7 @@ import TooltipController from "./tooltip_controller"
 
 export function registerShadcnControllers(application) {
   application.register("shadcn--accordion", AccordionController)
+  application.register("shadcn--dark-mode", DarkModeController)
   application.register("shadcn--checkbox", CheckboxController)
   application.register("shadcn--collapsible", CollapsibleController)
   application.register("shadcn--combobox", ComboboxController)
@@ -60,6 +62,7 @@ export function registerShadcnControllers(application) {
 
 export {
   AccordionController,
+  DarkModeController,
   CheckboxController,
   CollapsibleController,
   ComboboxController,

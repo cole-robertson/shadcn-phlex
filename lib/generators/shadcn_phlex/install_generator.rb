@@ -57,23 +57,19 @@ module ShadcnPhlex
     end
 
     def create_entrypoint
+      gem_path = Gem.loaded_specs["shadcn-phlex"]&.full_gem_path
+
       create_file "app/assets/stylesheets/shadcn.css", <<~CSS
         @import "tailwindcss";
         @import "tw-animate-css";
         @import "./shadcn-tailwind.css";
         @import "./shadcn-theme.css";
+
+        /* Ensure Tailwind scans component files for class names */
+        @source "../../app/components";
+        @source "../../app/views";
+        #{gem_path ? "@source \"#{gem_path}/lib/**/*.rb\";" : "/* @source \"path/to/shadcn-phlex/lib/**/*.rb\"; */"}
       CSS
-    end
-
-    def create_initializer
-      create_file "config/initializers/shadcn_phlex.rb", <<~RUBY
-        # frozen_string_literal: true
-
-        # Configure Tailwind to scan Phlex component files
-        # Add to your tailwind.config or CSS @source paths:
-        #   @source "../../app/components";
-        #   @source "../../app/views";
-      RUBY
     end
 
     def setup_stimulus

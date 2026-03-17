@@ -4,13 +4,17 @@ module Shadcn
   module UI
     # Port of shadcn/ui Checkbox
     class Checkbox < Base
-      def initialize(checked: false, **attrs)
+      def initialize(checked: false, name: nil, **attrs)
         @checked = checked
+        @name = name
         @attrs = attrs
       end
 
       def view_template
         span(data_controller: "shadcn--checkbox") do
+        if @name
+          input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__checkbox_target: "input")
+        end
         button(**build_attrs) do
           if @checked
             span(

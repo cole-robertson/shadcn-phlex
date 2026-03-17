@@ -14,10 +14,13 @@ export default class extends Controller {
   connect() {
     this._onKeydown = this._handleKeydown.bind(this)
     this._previouslyFocused = null
+    this._hideTimeouts = []
     this._syncState()
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     this._removeListeners()
     this._unlockScroll()
   }
@@ -185,11 +188,11 @@ export default class extends Controller {
     }
     el.addEventListener("animationend", onAnimEnd)
     // Fallback if no animation
-    setTimeout(() => {
+    this._hideTimeouts.push(setTimeout(() => {
       if (el.dataset.state === "closed") {
         el.hidden = true
       }
-    }, 300)
+    }, 300))
   }
 
   _ensureId(el, prefix) {

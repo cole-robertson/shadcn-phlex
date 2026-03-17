@@ -5,14 +5,18 @@ module Shadcn
     # Port of shadcn/ui Switch
     # Sizes: default, sm
     class Switch < Base
-      def initialize(checked: false, size: :default, **attrs)
+      def initialize(checked: false, size: :default, name: nil, **attrs)
         @checked = checked
         @size = size
+        @name = name
         @attrs = attrs
       end
 
       def view_template
         span(data_controller: "shadcn--switch") do
+          if @name
+            input(type: "hidden", name: @name, value: @checked ? "1" : "0", data_shadcn__switch_target: "input")
+          end
           button(**build_attrs) do
             span(**thumb_attrs)
           end

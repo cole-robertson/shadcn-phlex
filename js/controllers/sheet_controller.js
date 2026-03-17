@@ -14,10 +14,13 @@ export default class extends Controller {
   connect() {
     this._onKeydown = this._handleKeydown.bind(this)
     this._previouslyFocused = null
+    this._hideTimeouts = []
     this._syncState()
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     document.removeEventListener("keydown", this._onKeydown)
     this._unlockScroll()
   }
@@ -121,6 +124,6 @@ export default class extends Controller {
   _hideAfterAnimation(el) {
     const onEnd = () => { if (el.dataset.state === "closed") el.hidden = true; el.removeEventListener("animationend", onEnd) }
     el.addEventListener("animationend", onEnd)
-    setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 500)
+    this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 500))
   }
 }

@@ -13,6 +13,7 @@ export default class extends Controller {
 
   connect() {
     this._onClickOutside = this._handleClickOutside.bind(this)
+    this._hideTimeouts = []
     this._allItems = this.itemTargets.map((el) => ({
       element: el,
       value: el.dataset.value || "",
@@ -22,6 +23,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
     document.removeEventListener("click", this._onClickOutside, true)
   }
 
@@ -112,7 +115,7 @@ export default class extends Controller {
           if (this.hasInputTarget) this.inputTarget.focus()
         })
       } else {
-        setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200)
+        this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
         // Reset filter
         this._allItems.forEach(({ element }) => { element.hidden = false })
         this.emptyTargets.forEach((el) => { el.hidden = true })

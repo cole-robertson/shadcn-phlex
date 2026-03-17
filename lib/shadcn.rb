@@ -61,6 +61,11 @@ require_relative "shadcn/ui/toggle"
 require_relative "shadcn/ui/toggle_group"
 require_relative "shadcn/ui/tooltip"
 require_relative "shadcn/ui/typography"
+require_relative "shadcn/ui/theme_toggle"
+require_relative "shadcn/ui/text_field"
+
+# Kit module (short helpers)
+require_relative "shadcn/kit"
 
 # Theme system
 require_relative "shadcn/themes/base_colors"
