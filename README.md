@@ -194,15 +194,40 @@ rails g shadcn_phlex:component dialog
 rails g shadcn_phlex:component all
 ```
 
-## AI Skills
+## AI / LLM Support
 
-Install the agent skill for Claude Code, Cursor, or any compatible agent:
+The install generator automatically sets up everything LLMs need:
+
+```bash
+rails g shadcn_phlex:install
+```
+
+This installs:
+- **CLAUDE.md** — project context loaded automatically by Claude Code
+- **.cursorrules** — project context loaded automatically by Cursor
+- **.claude/skills/shadcn-phlex/** — full agent skill with rules, component catalog, and composition patterns
+- **.cursor/skills/shadcn-phlex/** — same skill for Cursor
+
+After installation, any LLM entering the project immediately knows how to use every component, the correct composition patterns, form integration, theming, and what not to do. No extra setup needed.
+
+### Manual skill installation
+
+If you prefer to install the skill separately (e.g., globally):
 
 ```bash
 npx skills add shadcn-phlex/shadcn-phlex
 ```
 
-This gives your AI assistant knowledge of all components, their APIs, composition patterns, and best practices.
+### What the skill teaches LLMs
+
+The skill follows the same structure as [shadcn's own agent skill](https://github.com/shadcn-ui/ui/tree/main/skills/shadcn):
+
+- **Component selection** — which component to use for each UI need
+- **Composition rules** — correct nesting (items in parents, titles required, etc.)
+- **Form rules** — `name:` for submission, TextField for labeled inputs, ToggleGroup for option sets
+- **Styling rules** — semantic colors, no space-y, size-* shorthand, no manual dark:
+- **Stimulus rules** — never manually add data-controller (components are pre-wired)
+- **Incorrect/Correct code pairs** — concrete Ruby/Phlex examples for every rule
 
 ## CSS Structure
 

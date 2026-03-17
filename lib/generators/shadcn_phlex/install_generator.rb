@@ -82,20 +82,32 @@ module ShadcnPhlex
       MSG
     end
 
+    def install_agent_skill
+      skill_source = gem_root.join("skills", "shadcn-phlex")
+      return unless File.directory?(skill_source)
+
+      # Install for Claude Code
+      install_skill_for(".claude/skills", skill_source)
+      # Install for Cursor
+      install_skill_for(".cursor/skills", skill_source)
+      # Install for generic agents
+      install_skill_for(".agents/skills", skill_source)
+    end
+
     def copy_llm_context
-      claude_md = File.expand_path("../../../../templates/CLAUDE.md", __dir__)
-      cursorrules = File.expand_path("../../../../templates/.cursorrules", __dir__)
+      claude_md = gem_root.join("templates", "CLAUDE.md")
+      cursorrules = gem_root.join("templates", ".cursorrules")
 
       if File.exist?(claude_md) && !File.exist?("CLAUDE.md")
-        copy_file claude_md, "CLAUDE.md"
+        copy_file claude_md.to_s, "CLAUDE.md"
       end
 
       if File.exist?(cursorrules) && !File.exist?(".cursorrules")
-        copy_file cursorrules, ".cursorrules"
+        copy_file cursorrules.to_s, ".cursorrules"
       end
     end
 
-    def print_theme_instructions
+    def print_setup_complete
       say_status :info, "Setup complete!", :green
       say <<~MSG
 
@@ -104,9 +116,11 @@ module ShadcnPhlex
           2. Pick a theme and copy the CSS
           3. Paste into app/assets/stylesheets/shadcn-theme.css
 
-        LLM context files added:
-          - CLAUDE.md (for Claude Code)
-          - .cursorrules (for Cursor)
+        LLM support installed:
+          - CLAUDE.md (project context for Claude Code)
+          - .cursorrules (project context for Cursor)
+          - .claude/skills/shadcn-phlex/ (agent skill)
+          - .cursor/skills/shadcn-phlex/ (agent skill)
 
       MSG
     end
@@ -119,8 +133,22 @@ module ShadcnPhlex
       false
     end
 
+    def gem_root
+      @gem_root ||= Pathname.new(File.expand_path("../../../..", __dir__))
+    end
+
     def gem_css(filename)
-      File.expand_path("../../../../css/#{filename}", __dir__)
+      gem_root.join("css", filename).to_s
+    end
+
+    def install_skill_for(agent_dir, source)
+      target = File.join(agent_dir, "shadcn-phlex")
+      return if File.exist?(target)
+
+      # Copy the full skill directory
+      FileUtils.mkdir_p(agent_dir)
+      FileUtils.cp_r(source.to_s, target)
+      say_status :create, target, :green
     end
   end
 end
