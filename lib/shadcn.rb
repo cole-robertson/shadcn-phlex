@@ -4,7 +4,10 @@ require "phlex"
 require "class_variants"
 require "tailwind_merge"
 
+require_relative "shadcn/version"
 require_relative "shadcn/base"
+
+# UI Components
 require_relative "shadcn/ui/accordion"
 require_relative "shadcn/ui/alert"
 require_relative "shadcn/ui/alert_dialog"
@@ -17,6 +20,8 @@ require_relative "shadcn/ui/button_group"
 require_relative "shadcn/ui/card"
 require_relative "shadcn/ui/checkbox"
 require_relative "shadcn/ui/collapsible"
+require_relative "shadcn/ui/command"
+require_relative "shadcn/ui/combobox"
 require_relative "shadcn/ui/context_menu"
 require_relative "shadcn/ui/dialog"
 require_relative "shadcn/ui/direction"
@@ -27,6 +32,7 @@ require_relative "shadcn/ui/field"
 require_relative "shadcn/ui/hover_card"
 require_relative "shadcn/ui/input"
 require_relative "shadcn/ui/input_group"
+require_relative "shadcn/ui/input_otp"
 require_relative "shadcn/ui/item"
 require_relative "shadcn/ui/kbd"
 require_relative "shadcn/ui/label"
@@ -37,10 +43,12 @@ require_relative "shadcn/ui/pagination"
 require_relative "shadcn/ui/popover"
 require_relative "shadcn/ui/progress"
 require_relative "shadcn/ui/radio_group"
+require_relative "shadcn/ui/resizable"
 require_relative "shadcn/ui/scroll_area"
 require_relative "shadcn/ui/select"
 require_relative "shadcn/ui/separator"
 require_relative "shadcn/ui/sheet"
+require_relative "shadcn/ui/sidebar"
 require_relative "shadcn/ui/skeleton"
 require_relative "shadcn/ui/slider"
 require_relative "shadcn/ui/sonner"
@@ -53,6 +61,13 @@ require_relative "shadcn/ui/toggle"
 require_relative "shadcn/ui/toggle_group"
 require_relative "shadcn/ui/tooltip"
 require_relative "shadcn/ui/typography"
+
+# Theme system
+require_relative "shadcn/themes/base_colors"
+require_relative "shadcn/themes/accent_colors"
+
+# Rails engine (loaded conditionally)
+require_relative "shadcn/engine" if defined?(Rails::Engine)
 
 module Shadcn
   module UI
