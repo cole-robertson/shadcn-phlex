@@ -23,7 +23,8 @@ module Shadcn
       def build_attrs
         @attrs.merge(
           data_slot: "select",
-          data_controller: "shadcn--select"
+          data_controller: "shadcn--select",
+          data_action: "click@window->shadcn--select#hide keydown.esc@window->shadcn--select#hideOnEscape keydown->shadcn--select#navigate"
         )
       end
     end

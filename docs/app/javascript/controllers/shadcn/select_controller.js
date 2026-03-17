@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Replicates Radix Select behavior
-// Custom dropdown select with keyboard navigation and form integration
+// Uses Stimulus's declarative event wiring (click@window) for click-outside
+// instead of programmatic document listeners — this avoids flicker.
 export default class extends Controller {
   static targets = ["trigger", "content", "item", "value", "input"]
   static values = {
@@ -12,28 +13,42 @@ export default class extends Controller {
   }
 
   connect() {
-    this._onClickOutside = this._handleClickOutside.bind(this)
-    this._onKeydown = this._handleKeydown.bind(this)
     this._hideTimeouts = []
-    this._syncState()
+    this._syncValueState()
+    // Ensure closed on connect
+    this.contentTargets.forEach((el) => { el.dataset.state = "closed"; el.hidden = true })
+    this.triggerTargets.forEach((el) => { el.dataset.state = "closed"; el.setAttribute("aria-expanded", "false") })
   }
 
   disconnect() {
     this._hideTimeouts.forEach(id => clearTimeout(id))
     this._hideTimeouts = []
-    this._removeListeners()
   }
 
+  // Wired as: data-action="click->shadcn--select#toggle"
   toggle() {
     if (this.disabledValue) return
     this.openValue = !this.openValue
   }
 
-  show() { if (!this.disabledValue) this.openValue = true }
-  hide() { this.openValue = false }
+  // Wired as: data-action="click@window->shadcn--select#hide"
+  // This fires on EVERY click on the page. The guard ensures it only
+  // closes when the click is outside this element.
+  hide(event) {
+    if (!this.openValue) return
+    if (event && event.target && this.element.contains(event.target)) return
+    this.openValue = false
+  }
 
+  // Wired as: data-action="keydown.esc@window->shadcn--select#hideOnEscape"
+  hideOnEscape(event) {
+    if (!this.openValue) return
+    this.openValue = false
+    this.triggerTargets[0]?.focus()
+  }
+
+  // Wired as: data-action="click->shadcn--select#selectItem"
   selectItem(event) {
-    event.stopPropagation()
     const item = event.currentTarget
     if (item.dataset.disabled) return
 
@@ -42,39 +57,44 @@ export default class extends Controller {
 
     this.valueValue = value
 
-    // Update display text
     this.valueTargets.forEach((el) => {
       el.textContent = label
       el.removeAttribute("data-placeholder")
     })
 
     this.dispatch("change", { detail: { value, label } })
-    this.hide()
-
-    // Return focus to trigger
+    this.openValue = false
     this.triggerTargets[0]?.focus()
   }
 
-  openValueChanged() { this._syncOpenState() }
-  valueValueChanged() { this._syncValueState() }
+  openValueChanged() {
+    if (!this._hideTimeouts) return
+    this._render()
+  }
 
-  _syncState() {
-    this._syncOpenState()
+  valueValueChanged() {
+    if (!this._hideTimeouts) return
     this._syncValueState()
   }
 
-  _syncOpenState() {
-    if (!this._hideTimeouts) return
-    const state = this.openValue ? "open" : "closed"
+  // ── Private ─────────────────────────────────────────
+
+  _render() {
+    const open = this.openValue
+    const state = open ? "open" : "closed"
+
+    // Clear pending hides
+    this._hideTimeouts.forEach(id => clearTimeout(id))
+    this._hideTimeouts = []
 
     this.triggerTargets.forEach((el) => {
       el.dataset.state = state
-      el.setAttribute("aria-expanded", String(this.openValue))
+      el.setAttribute("aria-expanded", String(open))
     })
 
     this.contentTargets.forEach((el) => {
       el.dataset.state = state
-      if (this.openValue) {
+      if (open) {
         el.hidden = false
         this._position(el)
         requestAnimationFrame(() => {
@@ -83,47 +103,22 @@ export default class extends Controller {
           target?.focus()
         })
       } else {
-        // Clear any pending hide timeouts first to prevent flicker
-        this._hideTimeouts.forEach(id => clearTimeout(id))
-        this._hideTimeouts = []
-        this._hideTimeouts.push(setTimeout(() => { if (el.dataset.state === "closed") el.hidden = true }, 200))
+        this._hideTimeouts.push(setTimeout(() => { el.hidden = true }, 150))
       }
     })
-
-    // Always remove old listeners first
-    this._removeListeners()
-
-    if (this.openValue) {
-      // Delay adding click-outside so the current click event finishes bubbling
-      setTimeout(() => {
-        if (this.openValue) {
-          document.addEventListener("click", this._onClickOutside, true)
-        }
-      }, 0)
-      document.addEventListener("keydown", this._onKeydown)
-    }
   }
 
   _syncValueState() {
-    // Update ARIA on items
     this.itemTargets.forEach((item) => {
       const isSelected = item.dataset.value === this.valueValue
       item.dataset.state = isSelected ? "checked" : "unchecked"
       item.setAttribute("aria-selected", String(isSelected))
-
-      // Show/hide check indicator
       const indicator = item.querySelector("span")
-      if (indicator) {
-        indicator.style.visibility = isSelected ? "visible" : "hidden"
-      }
+      if (indicator) indicator.style.visibility = isSelected ? "visible" : "hidden"
     })
 
-    // Update hidden input
-    this.inputTargets.forEach((input) => {
-      input.value = this.valueValue
-    })
+    this.inputTargets.forEach((input) => { input.value = this.valueValue })
 
-    // Update display
     if (!this.valueValue) {
       this.valueTargets.forEach((el) => {
         el.textContent = this.placeholderValue
@@ -142,26 +137,17 @@ export default class extends Controller {
     content.style.minWidth = `${Math.max(rect.width, 128)}px`
 
     let top = rect.bottom + 4
-
     const contentHeight = content.scrollHeight
     if (top + contentHeight > window.innerHeight) {
       top = rect.top - contentHeight - 4
-      content.dataset.side = "top"
-    } else {
-      content.dataset.side = "bottom"
     }
-
     content.style.top = `${top}px`
     content.style.left = `${rect.left}px`
   }
 
-  _handleClickOutside(event) {
-    if (!this.element.contains(event.target)) this.hide()
-  }
-
-  _handleKeydown(event) {
-    if (event.key === "Escape") { event.preventDefault(); this.hide(); this.triggerTargets[0]?.focus(); return }
-
+  // Keyboard nav within the open dropdown
+  navigate(event) {
+    if (!this.openValue) return
     const items = this._getItems()
     const current = items.indexOf(document.activeElement)
 
@@ -194,13 +180,6 @@ export default class extends Controller {
 
   _getItems() {
     if (!this.hasContentTarget) return []
-    return Array.from(this.contentTarget.querySelectorAll(
-      '[data-slot="select-item"]:not([data-disabled])'
-    ))
-  }
-
-  _removeListeners() {
-    document.removeEventListener("click", this._onClickOutside, true)
-    document.removeEventListener("keydown", this._onKeydown)
+    return Array.from(this.contentTarget.querySelectorAll('[data-slot="select-item"]:not([data-disabled])'))
   }
 }

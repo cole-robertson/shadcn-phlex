@@ -10501,28 +10501,42 @@
       disabled: { type: Boolean, default: false }
     };
     connect() {
-      this._onClickOutside = this._handleClickOutside.bind(this);
-      this._onKeydown = this._handleKeydown.bind(this);
       this._hideTimeouts = [];
-      this._syncState();
+      this._syncValueState();
+      this.contentTargets.forEach((el) => {
+        el.dataset.state = "closed";
+        el.hidden = true;
+      });
+      this.triggerTargets.forEach((el) => {
+        el.dataset.state = "closed";
+        el.setAttribute("aria-expanded", "false");
+      });
     }
     disconnect() {
       this._hideTimeouts.forEach((id) => clearTimeout(id));
       this._hideTimeouts = [];
-      this._removeListeners();
     }
+    // Wired as: data-action="click->shadcn--select#toggle"
     toggle() {
       if (this.disabledValue) return;
       this.openValue = !this.openValue;
     }
-    show() {
-      if (!this.disabledValue) this.openValue = true;
-    }
-    hide() {
+    // Wired as: data-action="click@window->shadcn--select#hide"
+    // This fires on EVERY click on the page. The guard ensures it only
+    // closes when the click is outside this element.
+    hide(event) {
+      if (!this.openValue) return;
+      if (event && event.target && this.element.contains(event.target)) return;
       this.openValue = false;
     }
+    // Wired as: data-action="keydown.esc@window->shadcn--select#hideOnEscape"
+    hideOnEscape(event) {
+      if (!this.openValue) return;
+      this.openValue = false;
+      this.triggerTargets[0]?.focus();
+    }
+    // Wired as: data-action="click->shadcn--select#selectItem"
     selectItem(event) {
-      event.stopPropagation();
       const item = event.currentTarget;
       if (item.dataset.disabled) return;
       const value = item.dataset.value;
@@ -10533,29 +10547,30 @@
         el.removeAttribute("data-placeholder");
       });
       this.dispatch("change", { detail: { value, label } });
-      this.hide();
+      this.openValue = false;
       this.triggerTargets[0]?.focus();
     }
     openValueChanged() {
-      this._syncOpenState();
+      if (!this._hideTimeouts) return;
+      this._render();
     }
     valueValueChanged() {
-      this._syncValueState();
-    }
-    _syncState() {
-      this._syncOpenState();
-      this._syncValueState();
-    }
-    _syncOpenState() {
       if (!this._hideTimeouts) return;
-      const state = this.openValue ? "open" : "closed";
+      this._syncValueState();
+    }
+    // ── Private ─────────────────────────────────────────
+    _render() {
+      const open = this.openValue;
+      const state = open ? "open" : "closed";
+      this._hideTimeouts.forEach((id) => clearTimeout(id));
+      this._hideTimeouts = [];
       this.triggerTargets.forEach((el) => {
         el.dataset.state = state;
-        el.setAttribute("aria-expanded", String(this.openValue));
+        el.setAttribute("aria-expanded", String(open));
       });
       this.contentTargets.forEach((el) => {
         el.dataset.state = state;
-        if (this.openValue) {
+        if (open) {
           el.hidden = false;
           this._position(el);
           requestAnimationFrame(() => {
@@ -10564,22 +10579,11 @@
             target?.focus();
           });
         } else {
-          this._hideTimeouts.forEach((id) => clearTimeout(id));
-          this._hideTimeouts = [];
           this._hideTimeouts.push(setTimeout(() => {
-            if (el.dataset.state === "closed") el.hidden = true;
-          }, 200));
+            el.hidden = true;
+          }, 150));
         }
       });
-      this._removeListeners();
-      if (this.openValue) {
-        setTimeout(() => {
-          if (this.openValue) {
-            document.addEventListener("click", this._onClickOutside, true);
-          }
-        }, 0);
-        document.addEventListener("keydown", this._onKeydown);
-      }
     }
     _syncValueState() {
       this.itemTargets.forEach((item) => {
@@ -10587,9 +10591,7 @@
         item.dataset.state = isSelected ? "checked" : "unchecked";
         item.setAttribute("aria-selected", String(isSelected));
         const indicator = item.querySelector("span");
-        if (indicator) {
-          indicator.style.visibility = isSelected ? "visible" : "hidden";
-        }
+        if (indicator) indicator.style.visibility = isSelected ? "visible" : "hidden";
       });
       this.inputTargets.forEach((input) => {
         input.value = this.valueValue;
@@ -10612,23 +10614,13 @@
       const contentHeight = content.scrollHeight;
       if (top + contentHeight > window.innerHeight) {
         top = rect.top - contentHeight - 4;
-        content.dataset.side = "top";
-      } else {
-        content.dataset.side = "bottom";
       }
       content.style.top = `${top}px`;
       content.style.left = `${rect.left}px`;
     }
-    _handleClickOutside(event) {
-      if (!this.element.contains(event.target)) this.hide();
-    }
-    _handleKeydown(event) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        this.hide();
-        this.triggerTargets[0]?.focus();
-        return;
-      }
+    // Keyboard nav within the open dropdown
+    navigate(event) {
+      if (!this.openValue) return;
       const items = this._getItems();
       const current = items.indexOf(document.activeElement);
       switch (event.key) {
@@ -10659,13 +10651,7 @@
     }
     _getItems() {
       if (!this.hasContentTarget) return [];
-      return Array.from(this.contentTarget.querySelectorAll(
-        '[data-slot="select-item"]:not([data-disabled])'
-      ));
-    }
-    _removeListeners() {
-      document.removeEventListener("click", this._onClickOutside, true);
-      document.removeEventListener("keydown", this._onKeydown);
+      return Array.from(this.contentTarget.querySelectorAll('[data-slot="select-item"]:not([data-disabled])'));
     }
   };
 
