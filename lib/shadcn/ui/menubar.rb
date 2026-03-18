@@ -58,7 +58,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none cursor-default",
-          "focus:bg-accent focus:text-accent-foreground",
+          "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground",
           "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
           @attrs.delete(:class)
         )
@@ -118,7 +118,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none",
-          "focus:bg-accent focus:text-accent-foreground",
+          "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground",
           "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "data-[inset]:pl-8",
           "data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10",
@@ -166,7 +166,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm",
-          "outline-hidden select-none focus:bg-accent focus:text-accent-foreground",
+          "outline-hidden select-none focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground",
           "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @attrs.delete(:class)
         )
@@ -220,7 +220,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm",
-          "outline-hidden select-none focus:bg-accent focus:text-accent-foreground",
+          "outline-hidden select-none focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground",
           "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @attrs.delete(:class)
         )
@@ -309,7 +309,7 @@ module Shadcn
       def build_attrs
         classes = cn(
           "flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none",
-          "focus:bg-accent focus:text-accent-foreground",
+          "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground",
           "data-[inset]:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
           "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           @attrs.delete(:class)
