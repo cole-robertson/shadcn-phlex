@@ -65,17 +65,26 @@ module Pages
             showcase_card do
               ui_card do
                 ui_card_header do
-                  ui_card_title { "Create Account" }
-                  ui_card_description { "Enter your details to get started." }
+                  ui_card_title { "New Project" }
+                  ui_card_description { "Configure your workspace settings." }
                 end
                 ui_card_content do
                   div(class: "flex flex-col gap-4") do
-                    ui_text_field(label: "Name", name: "name", placeholder: "John Doe")
-                    ui_text_field(label: "Email", name: "email", type: "email", placeholder: "john@example.com")
+                    ui_text_field(label: "Project name", name: "project[name]", placeholder: "my-awesome-app")
+                    ui_select(name: "project[framework]") do
+                      ui_select_trigger do
+                        ui_select_value(placeholder: "Framework")
+                      end
+                      ui_select_content do
+                        ui_select_item(value: "rails") { "Ruby on Rails" }
+                        ui_select_item(value: "sinatra") { "Sinatra" }
+                        ui_select_item(value: "hanami") { "Hanami" }
+                      end
+                    end
                   end
                 end
                 ui_card_footer do
-                  ui_button(class: "w-full") { "Sign Up" }
+                  ui_button(class: "w-full") { "Create Project" }
                 end
               end
             end
@@ -204,40 +213,37 @@ module Pages
           div(class: "grid gap-8 md:grid-cols-2 items-start") do
             # Code
             render ::Components::RubyCode.new(
-              filename: "app/views/settings_view.rb",
+              filename: "app/views/projects/settings_view.rb",
               code: <<~RUBY
-                class SettingsView < ApplicationView
+                class Projects::SettingsView < ApplicationView
                   def view_template
                     ui_card do
                       ui_card_header do
-                        ui_card_title { "Profile" }
+                        ui_card_title { "Project Settings" }
                         ui_card_description do
-                          "Update your personal information."
+                          "Configure your workspace."
                         end
                       end
                       ui_card_content do
                         ui_text_field(
-                          label: "Name",
-                          name: "user[name]",
-                          value: @user.name
+                          label: "Project name",
+                          name: "project[name]",
+                          value: @project.name
                         )
-                        ui_text_field(
-                          label: "Email",
-                          name: "user[email]",
-                          type: "email",
-                          error: @user.errors[:email]&.first
-                        )
-                        ui_select(name: "user[role]") do
+                        ui_select(name: "project[visibility]") do
                           ui_select_trigger do
-                            ui_select_value(placeholder: "Role")
+                            ui_select_value(placeholder: "Visibility")
                           end
                           ui_select_content do
-                            ui_select_item(value: "admin") { "Admin" }
-                            ui_select_item(value: "member") { "Member" }
+                            ui_select_item(value: "public") { "Public" }
+                            ui_select_item(value: "private") { "Private" }
                           end
                         end
-                        ui_switch(name: "user[newsletter]") do
-                          "Marketing emails"
+                        ui_switch(name: "project[ci]") do
+                          "Enable CI/CD"
+                        end
+                        ui_checkbox(name: "project[issues]") do
+                          "Issue tracking"
                         end
                       end
                       ui_card_footer do
@@ -256,24 +262,24 @@ module Pages
               div(class: "p-4") do
                 ui_card do
                   ui_card_header do
-                    ui_card_title { "Profile" }
-                    ui_card_description { "Update your personal information." }
+                    ui_card_title { "Project Settings" }
+                    ui_card_description { "Configure your workspace." }
                   end
                   ui_card_content do
                     div(class: "flex flex-col gap-4") do
-                      ui_text_field(label: "Name", name: "user[name]", value: "Cole Robertson")
-                      ui_text_field(label: "Email", name: "user[email]", type: "email", error: "has already been taken")
-                      ui_select(name: "user[role]") do
+                      ui_text_field(label: "Project name", name: "project[name]", value: "shadcn-phlex")
+                      ui_select(name: "project[visibility]") do
                         ui_select_trigger do
-                          ui_select_value(placeholder: "Role")
+                          ui_select_value(placeholder: "Visibility")
                         end
                         ui_select_content do
-                          ui_select_item(value: "admin") { "Admin" }
-                          ui_select_item(value: "member") { "Member" }
-                          ui_select_item(value: "viewer") { "Viewer" }
+                          ui_select_item(value: "public") { "Public" }
+                          ui_select_item(value: "private") { "Private" }
+                          ui_select_item(value: "internal") { "Internal" }
                         end
                       end
-                      ui_switch(name: "user[newsletter]", checked: true) { "Marketing emails" }
+                      ui_switch(name: "project[ci]", checked: true) { "Enable CI/CD" }
+                      ui_checkbox(name: "project[issues]", checked: true) { "Issue tracking" }
                     end
                   end
                   ui_card_footer(class: "flex justify-end gap-2") do
